@@ -116,8 +116,8 @@
     .work-title { font-size: 11px; color: #7c3aed; font-weight: 700; margin-top: 4px; }
 
     @media (max-width: 640px) {
-      .top-banner { height: 120px; }
-      .top-banner img { height: 120px; }
+      .top-banner { height: 160px; }
+      .top-banner img { height: 160px; }
       .main { flex-direction: column; }
       .sidebar { width: 100%; display: flex; flex-direction: row; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid #e5e5e5; }
       .sidebar a { flex-shrink: 0; padding: 6px 12px; border-bottom: none; border-right: 1px solid #f0e6ff; font-size: 11px; }
@@ -294,10 +294,10 @@ async function fetchCSV(gid) {
 
 function convertDriveUrl(url) {
   if (!url) return "";
-  const m = url.match(/\/d\/([^\/]+)/);
-  if (m) return "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w1200";
-  const m2 = url.match(/id=([^&]+)/);
-  if (m2) return "https://drive.google.com/thumbnail?id=" + m2[1] + "&sz=w1200";
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+  if (m) return "https://lh3.googleusercontent.com/d/" + m[1];
+  const m2 = url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+  if (m2) return "https://lh3.googleusercontent.com/d/" + m2[1];
   return url;
 }
 
