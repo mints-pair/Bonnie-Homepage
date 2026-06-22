@@ -375,11 +375,14 @@ function showPage(page, el) {
 
 function getYoutubeThumbnail(url) {
   if (!url) return "";
-  // รองรับ youtube.com/watch?v=, youtu.be/, youtube.com/live/
   const m = url.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/);
   if (!m) return "";
   const id = m[1];
-  return "https://img.youtube.com/vi/" + id + "/mqdefault.jpg";
+  return "https://img.youtube.com/vi/" + id + "/maxresdefault.jpg";
+}
+
+function getFallbackThumbnail(id) {
+  return "https://img.youtube.com/vi/" + id + "/hqdefault.jpg";
 }
 
 async function loadVideos() {
@@ -389,8 +392,8 @@ async function loadVideos() {
   if (ytGrid && rows.length) {
     ytGrid.innerHTML = rows.map(r => {
       const url = r[0] || "";
-      const id = (url.match(/(?:v=|youtu\.be\/)([^&?\/]+)/) || [])[1] || "";
-      return '<a href="' + url + '" target="_blank" class="yt-link"><img src="' + getYoutubeThumbnail(url) + '" class="yt-thumb" alt="video" onerror="this.src=\'https://img.youtube.com/vi/' + id + '/default.jpg\'"></a>';
+      const id = (url.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/) || [])[1] || "";
+      return '<a href="' + url + '" target="_blank" class="yt-link"><img src="' + getYoutubeThumbnail(url) + '" class="yt-thumb" alt="video" onerror="this.onerror=null;this.src=\'https://img.youtube.com/vi/' + id + '/hqdefault.jpg\'"></a>';
     }).join("");
   }
 
@@ -401,8 +404,8 @@ async function loadVideos() {
     ytPageGrid.innerHTML = ytRows.map(r => {
       const url = r[0] || "";
       const title = r[1] || "";
-      const id = (url.match(/(?:v=|youtu\.be\/)([^&?\/]+)/) || [])[1] || "";
-      return '<a href="' + url + '" target="_blank" class="yt-card"><img src="' + getYoutubeThumbnail(url) + '" alt="' + title + '" onerror="this.src=\'https://img.youtube.com/vi/' + id + '/default.jpg\'"><div class="yt-card-title">' + title + '</div></a>';
+      const id = (url.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/) || [])[1] || "";
+      return '<a href="' + url + '" target="_blank" class="yt-card"><img src="' + getYoutubeThumbnail(url) + '" alt="' + title + '" onerror="this.onerror=null;this.src=\'https://img.youtube.com/vi/' + id + '/hqdefault.jpg\'"><div class="yt-card-title">' + title + '</div></a>';
     }).join("");
   }
 }
