@@ -453,6 +453,8 @@ async function loadContact() {
       '</div></a>';
   }).join("");
 }
+
+function scrollProfile(dir) {
   const slider = document.getElementById("profile-slider");
   const imgWidth = slider.querySelector(".profile-img")?.offsetWidth || 0;
   slider.scrollBy({ left: dir * (imgWidth + 12), behavior: "smooth" });
