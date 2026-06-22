@@ -347,12 +347,21 @@ async function loadSocials() {
   ).join("");
 }
 
+function getYoutubeThumbnail(url) {
+  if (!url) return "";
+  // รองรับทั้ง youtube.com/watch?v=ID และ youtu.be/ID
+  const m = url.match(/(?:v=|youtu\.be\/)([^&?\/]+)/);
+  return m ? "https://img.youtube.com/vi/" + m[1] + "/hqdefault.jpg" : "";
+}
+
 async function loadVideos() {
   const rows = await fetchCSV(GID.videos);
   if (!rows.length) return;
-  document.getElementById("yt-grid").innerHTML = rows.map(r =>
-    '<a href="' + (r[1]||'#') + '" target="_blank" class="yt-link"><img src="' + convertDriveUrl(r[0]) + '" class="yt-thumb" alt="video"></a>'
-  ).join("");
+  document.getElementById("yt-grid").innerHTML = rows.map(r => {
+    const url = r[0] || r[1] || "";
+    const thumb = getYoutubeThumbnail(url);
+    return '<a href="' + url + '" target="_blank" class="yt-link"><img src="' + thumb + '" class="yt-thumb" alt="video"></a>';
+  }).join("");
 }
 
 let scheduleEvents = []; // [{date, title, location, time, livestream, with}]
