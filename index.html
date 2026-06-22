@@ -82,7 +82,13 @@
     .yt-link { text-decoration: none; }
 
     .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
-    .yt-page-label { font-size: 13px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; margin-bottom: 12px; }
+    .contact-label { font-size: 13px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; margin-bottom: 16px; }
+    .contact-list { display: flex; flex-direction: column; gap: 10px; max-width: 480px; }
+    .contact-item { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #fff; border: 1px solid #f0e6ff; border-radius: 12px; padding: 14px 16px; transition: background 0.15s; }
+    .contact-item:hover { background: #f5f0ff; }
+    .contact-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .contact-platform { font-size: 12px; color: #888; margin-bottom: 2px; }
+    .contact-handle { font-size: 14px; font-weight: 700; color: #3b0764; }
     .yt-page-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .yt-card { text-decoration: none; display: block; }
     .yt-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: #ddd; display: block; }
@@ -135,7 +141,7 @@
     <aside class="sidebar">
       <a href="#" onclick="showPage('home',this)">HOME</a>
       <a href="#" onclick="showPage('youtube',this)">YOUTUBE</a>
-      <a href="#">CONTACT US</a>
+      <a href="#" onclick="showPage('contact',this)">CONTACT US</a>
     </aside>
 
     <div class="content">
@@ -209,6 +215,48 @@
         <div class="yt-page-label">YOUTUBE</div>
         <div class="yt-page-grid" id="yt-page-grid">
           <div class="loading">กำลังโหลด...</div>
+        </div>
+      </div>
+
+      <!-- หน้า CONTACT US -->
+      <div id="page-contact" style="display:none">
+        <div class="contact-label">CONTACT US</div>
+        <div class="contact-list">
+          <a href="https://x.com/bonnieofficialth_" target="_blank" class="contact-item">
+            <div class="contact-icon" style="background:#000">𝕏</div>
+            <div class="contact-info">
+              <div class="contact-platform">X (Twitter)</div>
+              <div class="contact-handle">@bonnieofficialth_</div>
+            </div>
+          </a>
+          <a href="https://instagram.com/bonnieofficialth" target="_blank" class="contact-item">
+            <div class="contact-icon" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">IG</div>
+            <div class="contact-info">
+              <div class="contact-platform">Instagram</div>
+              <div class="contact-handle">bonnieofficialth</div>
+            </div>
+          </a>
+          <a href="https://tiktok.com/@bonnieofficialth_" target="_blank" class="contact-item">
+            <div class="contact-icon" style="background:#010101">TK</div>
+            <div class="contact-info">
+              <div class="contact-platform">TikTok</div>
+              <div class="contact-handle">@bonnieofficialth_</div>
+            </div>
+          </a>
+          <a href="https://www.youtube.com/@BonnieOfficialTH" target="_blank" class="contact-item">
+            <div class="contact-icon" style="background:#ff0000">YT</div>
+            <div class="contact-info">
+              <div class="contact-platform">YouTube</div>
+              <div class="contact-handle">@BonnieOfficialTH</div>
+            </div>
+          </a>
+          <a href="#" class="contact-item">
+            <div class="contact-icon" style="background:#06c755">OC</div>
+            <div class="contact-info">
+              <div class="contact-platform">LINE OpenChat</div>
+              <div class="contact-handle">BONNIE_OFFICIALTH</div>
+            </div>
+          </a>
         </div>
       </div>
 
@@ -369,6 +417,7 @@ async function loadSocials() {
 function showPage(page, el) {
   document.getElementById("page-home").style.display = page === "home" ? "block" : "none";
   document.getElementById("page-youtube").style.display = page === "youtube" ? "block" : "none";
+  document.getElementById("page-contact").style.display = page === "contact" ? "block" : "none";
   document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active-menu"));
   if (el) el.classList.add("active-menu");
 }
