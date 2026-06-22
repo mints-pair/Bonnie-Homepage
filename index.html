@@ -375,10 +375,10 @@ function showPage(page, el) {
 
 function getYoutubeThumbnail(url) {
   if (!url) return "";
-  const m = url.match(/(?:v=|youtu\.be\/)([^&?\/]+)/);
+  // รองรับ youtube.com/watch?v=, youtu.be/, youtube.com/live/
+  const m = url.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/);
   if (!m) return "";
   const id = m[1];
-  // ลอง maxresdefault ก่อน ถ้าไม่ได้ fallback เป็น mqdefault
   return "https://img.youtube.com/vi/" + id + "/mqdefault.jpg";
 }
 
