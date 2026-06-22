@@ -92,6 +92,7 @@
     /* Video thumbnail — aspect ratio 16:9 (640×360) */
     .yt-thumb { border-radius: 8px; width: 100%; aspect-ratio: 16/9; object-fit: cover; object-position: center; background: #ddd; display: block; }
     .yt-link { text-decoration: none; }
+    .yt-title { font-size: 12px; color: #444; margin-top: 4px; font-weight: 500; line-height: 1.4; }
 
     .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
     .contact-label { font-size: 13px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; margin-bottom: 16px; }
@@ -501,8 +502,9 @@ async function loadVideos() {
   if (ytGrid && rows.length) {
     ytGrid.innerHTML = rows.map(r => {
       const url = r[0] || "";
+      const title = r[1] || "";
       const id = (url.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/) || [])[1] || "";
-      return '<a href="' + url + '" target="_blank" class="yt-link"><img src="' + getYoutubeThumbnail(url) + '" class="yt-thumb" alt="video" onerror="this.onerror=null;this.src=\'https://img.youtube.com/vi/' + id + '/hqdefault.jpg\'"></a>';
+      return '<a href="' + url + '" target="_blank" class="yt-link"><img src="' + getYoutubeThumbnail(url) + '" class="yt-thumb" alt="' + title + '" onerror="this.onerror=null;this.src=\'https://img.youtube.com/vi/' + id + '/hqdefault.jpg\'">' + (title ? '<div class="yt-title">' + title + '</div>' : '') + '</a>';
     }).join("");
   }
 
