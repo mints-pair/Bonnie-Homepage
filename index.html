@@ -92,7 +92,6 @@
         <div class="tab" onclick="switchTab('news',this)">NEWS</div>
       </div>
 
-      <!-- PROFILE TAB -->
       <div class="tab-content active" id="tab-profile">
         <div class="lower">
           <img class="profile-img" id="profile-img" src="" alt="Profile">
@@ -119,12 +118,10 @@
         <p class="bio-text" id="bio-text"></p>
       </div>
 
-      <!-- WORKS TAB -->
       <div class="tab-content" id="tab-works">
         <div class="works-grid" id="works-grid"><div class="loading">กำลังโหลด...</div></div>
       </div>
 
-      <!-- NEWS TAB -->
       <div class="tab-content" id="tab-news">
         <div id="news-list"><div class="loading">กำลังโหลด...</div></div>
       </div>
@@ -151,32 +148,18 @@
 
 <script>
 // =========================================================
-// 🔧 ตั้งค่าตรงนี้เพียงที่เดียว
-// ใส่ URL ของ Google Sheets ที่ publish แล้ว (CSV format)
-// วิธีได้ URL: File → Share → Publish to web → CSV → Copy link
+// 🔧 ตั้งค่าตรงนี้เพียงที่เดียว — วาง URL Google Sheets ตรงนี้
 // =========================================================
-https://docs.google.com/spreadsheets/d/e/2PACX-1vS1aAyI6iVaNDvBRWbwCvd8nMnBMrRMQPoxXR6Kix-iFvb9tDCXJDugY3NalvvY5ZSjIA8uGmJdCcpm/pubhtml?gid=0&single=true
-
-// =========================================================
-// โครงสร้าง Google Sheets (แต่ละ sheet = แต่ละ tab)
-// Sheet 1 "config"  : key, value
-// Sheet 2 "slider"  : image_url
-// Sheet 3 "works"   : title, image_url, link
-// Sheet 4 "news"    : date, title, link
-// Sheet 5 "socials" : platform, image_url, link
-// Sheet 6 "videos"  : image_url, youtube_link
-// Sheet 7 "schedule": date (YYYY-MM-DD)
-// =========================================================
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1aAyI6iVaNDvBRWbwCvd8nMnBMrRMQPoxXR6Kix-iFvb9tDCXJDugY3NalvvY5ZSjIA8uGmJdCcpm/pub?output=csv&gid=0";
 
 let scheduleDates = [];
-let currentDate = new Date();
 let sliderImages = [];
 let sliderIndex = 0;
 let sliderTimer;
 
 function getSheetUrl(gid) {
-  if (SHEET_URL === "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1aAyI6iVaNDvBRWbwCvd8nMnBMrRMQPoxXR6Kix-iFvb9tDCXJDugY3NalvvY5ZSjIA8uGmJdCcpm/pub?gid=0&single=true&output=csv") return null;
-  return SHEET_URL.replace(/gid=\d+/, `gid=${gid}`) + "&gid=" + gid;
+  if (!SHEET_URL) return null;
+  return SHEET_URL.replace(/gid=\d+/, "gid=" + gid);
 }
 
 async function fetchCSV(gid) {
@@ -194,7 +177,7 @@ async function fetchCSV(gid) {
 function convertDriveUrl(url) {
   if (!url) return "";
   const m = url.match(/[-\w]{25,}/);
-  return m ? `https://drive.google.com/thumbnail?id=${m[0]}&sz=w400` : url;
+  return m ? "https://drive.google.com/thumbnail?id=" + m[0] + "&sz=w400" : url;
 }
 
 async function loadConfig() {
@@ -207,8 +190,7 @@ async function loadConfig() {
     img.onerror = () => img.style.display = "none";
   }
   if (cfg.profile_img_url) {
-    const img = document.getElementById("profile-img");
-    img.src = convertDriveUrl(cfg.profile_img_url);
+    document.getElementById("profile-img").src = convertDriveUrl(cfg.profile_img_url);
   }
   if (cfg.bio) document.getElementById("bio-text").textContent = cfg.bio;
 }
@@ -226,7 +208,7 @@ async function loadSlider() {
     box.insertBefore(img, dotsEl);
   });
   dotsEl.innerHTML = sliderImages.map((_, i) =>
-    `<div class="dot${i===0?' active':''}" onclick="goSlide(${i})"></div>`
+    '<div class="dot' + (i===0?' active':'') + '" onclick="goSlide(' + i + ')"></div>'
   ).join("");
   startSlider();
 }
@@ -252,12 +234,7 @@ async function loadWorks() {
   const grid = document.getElementById("works-grid");
   if (!rows.length) { grid.innerHTML = "<div class='loading'>ยังไม่มีข้อมูล</div>"; return; }
   grid.innerHTML = rows.map(r =>
-    `<div class="work-item">
-      <a href="${r[2]||'#'}" target="_blank">
-        <img src="${convertDriveUrl(r[1])}" alt="${r[0]}">
-      </a>
-      <div class="work-title">${r[0]}</div>
-    </div>`
+    '<div class="work-item"><a href="' + (r[2]||'#') + '" target="_blank"><img src="' + convertDriveUrl(r[1]) + '" alt="' + r[0] + '"></a><div class="work-title">' + r[0] + '</div></div>'
   ).join("");
 }
 
@@ -266,35 +243,23 @@ async function loadNews() {
   const list = document.getElementById("news-list");
   if (!rows.length) { list.innerHTML = "<div class='loading'>ยังไม่มีข้อมูล</div>"; return; }
   list.innerHTML = rows.map(r =>
-    `<div class="news-item">
-      <div class="news-date">${r[0]}</div>
-      <div class="news-title"><a href="${r[2]||'#'}" target="_blank" style="color:#444;text-decoration:none">${r[1]}</a></div>
-    </div>`
+    '<div class="news-item"><div class="news-date">' + r[0] + '</div><div class="news-title"><a href="' + (r[2]||'#') + '" target="_blank" style="color:#444;text-decoration:none">' + r[1] + '</a></div></div>'
   ).join("");
 }
 
 async function loadSocials() {
   const rows = await fetchCSV(4);
   if (!rows.length) return;
-  const grid = document.getElementById("social-grid");
-  grid.innerHTML = rows.map(r =>
-    `<div>
-      <div class="s-name">${r[0]}</div>
-      <a href="${r[2]||'#'}" target="_blank" class="social-link">
-        <img src="${convertDriveUrl(r[1])}" class="social-thumb" alt="${r[0]}">
-      </a>
-    </div>`
+  document.getElementById("social-grid").innerHTML = rows.map(r =>
+    '<div><div class="s-name">' + r[0] + '</div><a href="' + (r[2]||'#') + '" target="_blank" class="social-link"><img src="' + convertDriveUrl(r[1]) + '" class="social-thumb" alt="' + r[0] + '"></a></div>'
   ).join("");
 }
 
 async function loadVideos() {
   const rows = await fetchCSV(5);
   if (!rows.length) return;
-  const grid = document.getElementById("yt-grid");
-  grid.innerHTML = rows.map(r =>
-    `<a href="${r[1]||'#'}" target="_blank" class="yt-link">
-      <img src="${convertDriveUrl(r[0])}" class="yt-thumb" alt="video">
-    </a>`
+  document.getElementById("yt-grid").innerHTML = rows.map(r =>
+    '<a href="' + (r[1]||'#') + '" target="_blank" class="yt-link"><img src="' + convertDriveUrl(r[0]) + '" class="yt-thumb" alt="video"></a>'
   ).join("");
 }
 
@@ -311,17 +276,17 @@ function renderCalendar() {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const days = ["Su","Mo","Tu","We","Th","Fr","Sa"];
-  let html = days.map(d => `<div class="day-label">${d}</div>`).join("");
-  for (let i = 0; i < firstDay; i++) html += `<div class="day muted"></div>`;
+  let html = days.map(d => '<div class="day-label">' + d + '</div>').join("");
+  for (let i = 0; i < firstDay; i++) html += '<div class="day muted"></div>';
   for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dateStr = year + "-" + String(month+1).padStart(2,'0') + "-" + String(d).padStart(2,'0');
     const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
     const isEvent = scheduleDates.includes(dateStr);
     const cls = isToday ? "today" : isEvent ? "highlight" : "";
-    html += `<div class="day ${cls}">${d}</div>`;
+    html += '<div class="day ' + cls + '">' + d + '</div>';
   }
   const remaining = (7 - (firstDay + daysInMonth) % 7) % 7;
-  for (let i = 1; i <= remaining; i++) html += `<div class="day muted">${i}</div>`;
+  for (let i = 1; i <= remaining; i++) html += '<div class="day muted">' + i + '</div>';
   document.getElementById("cal-grid").innerHTML = html;
 }
 
@@ -346,7 +311,7 @@ function switchTab(name, el) {
 
 async function init() {
   renderCalendar();
-  if (SHEET_URL !== "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1aAyI6iVaNDvBRWbwCvd8nMnBMrRMQPoxXR6Kix-iFvb9tDCXJDugY3NalvvY5ZSjIA8uGmJdCcpm/pub?gid=0&single=true&output=csv") {
+  if (SHEET_URL) {
     await Promise.all([
       loadConfig(), loadSlider(), loadWorks(),
       loadNews(), loadSocials(), loadVideos(), loadSchedule()
