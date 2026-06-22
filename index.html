@@ -595,7 +595,7 @@ let scheduleEvents = []; // [{date, title, location, time, livestream, with}]
 async function loadSchedule() {
   const rows = await fetchCSV(GID.schedule);
   scheduleEvents = rows.filter(r => r[0]).map(r => ({
-    date: r[0], title: r[1]||'', location: r[2]||'', time: r[3]||'', livestream: r[4]||'', with: r[5]||''
+    date: r[0], title: r[1]||'', location: r[2]||'', time: r[3]||'', livestream: r[4]||'', with: r[5]||'', note: r[6]||''
   }));
   scheduleDates = [...new Set(scheduleEvents.map(e => e.date))];
   renderCalendar();
@@ -617,6 +617,7 @@ function showEvents(dateStr) {
     (e.time ? '<div class="e-row"><span>Time :</span>' + e.time + '</div>' : '') +
     (e.livestream ? '<div class="e-row"><span>Live Streaming :</span><a href="' + e.livestream + '" target="_blank" style="color:#7c3aed">' + e.livestream + '</a></div>' : '') +
     (e.with ? '<div class="e-row"><span>With :</span>' + e.with + '</div>' : '') +
+    (e.note ? '<div class="e-row"><span>Note :</span>' + e.note + '</div>' : '') +
     '</div>'
   ).join("");
   detail.style.display = "block";
