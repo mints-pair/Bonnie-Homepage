@@ -52,6 +52,11 @@
     .profile-nav.hidden { opacity: 0; pointer-events: none; }
     .bio-text { font-size: 13px; color: #555; line-height: 1.7; margin-top: 8px; }
 
+    /* Works calendar layout */
+    .works-cal-row { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 8px; }
+    .works-cal-left { width: 50%; flex-shrink: 0; }
+    .works-cal-right { flex: 1; min-height: 200px; }
+
     .calendar-wrap { width: 33%; flex-shrink: 0; }
     .cal-label { font-size: 11px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; margin-bottom: 6px; }
     .calendar { border: 1px solid #d8b4fe; border-radius: 8px; padding: 10px; background: #fff; }
@@ -119,6 +124,8 @@
       .profile-img { width: calc((100% - 12px) * 3/4); aspect-ratio: 210/297; }
       .calendar-wrap { width: 100%; }
       .social-grid { grid-template-columns: repeat(2, 1fr); }
+      .works-cal-row { flex-direction: column; }
+      .works-cal-left { width: 100%; }
       .yt-page-grid { grid-template-columns: repeat(2, 1fr); }
       .contact-list { grid-template-columns: 1fr; }
       .works-grid { grid-template-columns: 1fr; }
@@ -192,27 +199,33 @@
       <div class="tab-content" id="tab-works">
         <div class="works-section">
           <div class="cal-label" style="margin-bottom:8px">SCHEDULE</div>
-          <div class="calendar" style="margin-bottom:8px">
-            <div class="cal-header">
-              <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
-              <select id="cal-month" onchange="renderCalendar()">
-                <option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option>
-                <option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option>
-                <option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option>
-                <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
-              </select>
-              <select id="cal-year" onchange="renderCalendar()">
-                <option>2024</option><option selected>2025</option><option>2026</option>
-              </select>
-              <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+          <div class="works-cal-row">
+            <div class="works-cal-left">
+              <div class="calendar">
+                <div class="cal-header">
+                  <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
+                  <select id="cal-month" onchange="renderCalendar()">
+                    <option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option>
+                    <option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option>
+                    <option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option>
+                    <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
+                  </select>
+                  <select id="cal-year" onchange="renderCalendar()">
+                    <option>2024</option><option selected>2025</option><option>2026</option>
+                  </select>
+                  <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+                </div>
+                <div class="cal-grid" id="cal-grid"></div>
+              </div>
             </div>
-            <div class="cal-grid" id="cal-grid"></div>
+            <div class="works-cal-right">
+              <div id="event-detail" style="display:none; border:1px solid #d8b4fe; border-radius:8px; padding:12px; background:#fff; height:100%;">
+                <div id="event-date-title" style="font-size:12px; font-weight:800; color:#7c3aed; margin-bottom:10px;"></div>
+                <div id="event-list"></div>
+              </div>
+            </div>
           </div>
-          <div id="event-detail" style="display:none; border:1px solid #d8b4fe; border-radius:8px; padding:12px; background:#fff; margin-bottom:14px;">
-            <div id="event-date-title" style="font-size:12px; font-weight:800; color:#7c3aed; margin-bottom:10px;"></div>
-            <div id="event-list"></div>
-          </div>
-          <div class="works-grid" id="works-grid"><div class="loading">กำลังโหลด...</div></div>
+          <div class="works-grid" id="works-grid" style="margin-top:14px"><div class="loading">กำลังโหลด...</div></div>
         </div>
       </div>
 
