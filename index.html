@@ -175,7 +175,7 @@ let sliderIndex = 0;
 let sliderTimer;
 
 function getSheetUrl(gid) {
-  if (SHEET_URL === "YOUR_GOOGLE_SHEET_CSV_URL_HERE") return null;
+  if (SHEET_URL === "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1aAyI6iVaNDvBRWbwCvd8nMnBMrRMQPoxXR6Kix-iFvb9tDCXJDugY3NalvvY5ZSjIA8uGmJdCcpm/pub?gid=0&single=true&output=csv") return null;
   return SHEET_URL.replace(/gid=\d+/, `gid=${gid}`) + "&gid=" + gid;
 }
 
@@ -346,7 +346,7 @@ function switchTab(name, el) {
 
 async function init() {
   renderCalendar();
-  if (SHEET_URL !== "YOUR_GOOGLE_SHEET_CSV_URL_HERE") {
+  if (SHEET_URL !== "https://docs.google.com/spreadsheets/d/e/2PACX-1vS1aAyI6iVaNDvBRWbwCvd8nMnBMrRMQPoxXR6Kix-iFvb9tDCXJDugY3NalvvY5ZSjIA8uGmJdCcpm/pub?gid=0&single=true&output=csv") {
     await Promise.all([
       loadConfig(), loadSlider(), loadWorks(),
       loadNews(), loadSocials(), loadVideos(), loadSchedule()
