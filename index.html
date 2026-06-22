@@ -223,7 +223,8 @@ const GID = {
   news:     2006339432,
   socials:  1571914792,
   videos:   1639743877,
-  schedule: 1512851118
+  schedule: 1512851118,
+  youtube:  1689560596
 };
 
 let scheduleDates = [];
@@ -375,29 +376,33 @@ function showPage(page, el) {
 function getYoutubeThumbnail(url) {
   if (!url) return "";
   const m = url.match(/(?:v=|youtu\.be\/)([^&?\/]+)/);
-  return m ? "https://img.youtube.com/vi/" + m[1] + "/hqdefault.jpg" : "";
+  if (!m) return "";
+  const id = m[1];
+  // ลอง maxresdefault ก่อน ถ้าไม่ได้ fallback เป็น mqdefault
+  return "https://img.youtube.com/vi/" + id + "/mqdefault.jpg";
 }
 
 async function loadVideos() {
+  // Official Video — ดึงจาก sheet Videos
   const rows = await fetchCSV(GID.videos);
-  if (!rows.length) return;
-
-  // Official Video section (หน้า Profile — แสดงแค่ 2 อัน)
   const ytGrid = document.getElementById("yt-grid");
-  if (ytGrid) {
-    ytGrid.innerHTML = rows.slice(0, 2).map(r => {
+  if (ytGrid && rows.length) {
+    ytGrid.innerHTML = rows.map(r => {
       const url = r[0] || "";
-      return '<a href="' + url + '" target="_blank" class="yt-link"><img src="' + getYoutubeThumbnail(url) + '" class="yt-thumb" alt="video"></a>';
+      const id = (url.match(/(?:v=|youtu\.be\/)([^&?\/]+)/) || [])[1] || "";
+      return '<a href="' + url + '" target="_blank" class="yt-link"><img src="' + getYoutubeThumbnail(url) + '" class="yt-thumb" alt="video" onerror="this.src=\'https://img.youtube.com/vi/' + id + '/default.jpg\'"></a>';
     }).join("");
   }
 
-  // หน้า YouTube (แสดงทั้งหมด)
+  // หน้า YouTube — ดึงจาก sheet Youtube แยก
+  const ytRows = await fetchCSV(GID.youtube);
   const ytPageGrid = document.getElementById("yt-page-grid");
-  if (ytPageGrid) {
-    ytPageGrid.innerHTML = rows.map(r => {
+  if (ytPageGrid && ytRows.length) {
+    ytPageGrid.innerHTML = ytRows.map(r => {
       const url = r[0] || "";
       const title = r[1] || "";
-      return '<a href="' + url + '" target="_blank" class="yt-card"><img src="' + getYoutubeThumbnail(url) + '" alt="' + title + '"><div class="yt-card-title">' + title + '</div></a>';
+      const id = (url.match(/(?:v=|youtu\.be\/)([^&?\/]+)/) || [])[1] || "";
+      return '<a href="' + url + '" target="_blank" class="yt-card"><img src="' + getYoutubeThumbnail(url) + '" alt="' + title + '" onerror="this.src=\'https://img.youtube.com/vi/' + id + '/default.jpg\'"><div class="yt-card-title">' + title + '</div></a>';
     }).join("");
   }
 }
