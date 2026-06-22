@@ -38,8 +38,8 @@
 
     .lower { display: flex; gap: 12px; align-items: flex-start; }
     .profile-wrap { flex: 1; min-width: 0; }
-    /* Profile — aspect ratio 8:3 (800×300) */
-    .profile-img { border-radius: 8px; width: 100%; aspect-ratio: 8/3; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; }
+    /* Profile — A4 ratio (210×297) แนวตั้ง */
+    .profile-img { border-radius: 8px; width: 40%; aspect-ratio: 210/297; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; margin: 0 auto; }
     .bio-text { font-size: 13px; color: #555; line-height: 1.7; margin-top: 8px; }
 
     .calendar-wrap { width: 33%; flex-shrink: 0; }
@@ -50,11 +50,19 @@
     .cal-nav { background: none; border: none; font-size: 16px; cursor: pointer; color: #7c3aed; padding: 0 4px; }
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
     .cal-grid .day-label { font-size: 10px; color: #888; padding: 2px 0; }
-    .cal-grid .day { font-size: 11px; padding: 4px 2px; border-radius: 4px; cursor: pointer; color: #444; }
+    .cal-grid .day { font-size: 11px; padding: 4px 2px; border-radius: 4px; cursor: pointer; color: #444; position: relative; }
     .cal-grid .day:hover { background: #f0e6ff; }
     .cal-grid .day.today { background: #1a1a1a; color: #fff; }
     .cal-grid .day.highlight { background: #7c3aed; color: #fff; }
+    .cal-grid .day.selected { outline: 2px solid #7c3aed; }
     .cal-grid .day.muted { color: #ccc; }
+    .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #f472b6; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); }
+    .day.highlight .event-dot { background: #fff; }
+    .event-item { border-bottom: 1px solid #f0e6ff; padding: 8px 0; }
+    .event-item:last-child { border-bottom: none; }
+    .event-item .e-name { font-size: 13px; font-weight: 700; color: #3b0764; margin-bottom: 4px; }
+    .event-item .e-row { font-size: 12px; color: #555; margin-bottom: 2px; }
+    .event-item .e-row span { color: #7c3aed; font-weight: 700; margin-right: 6px; }
 
     .social-section { margin-top: 14px; }
     .social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
@@ -87,6 +95,7 @@
       .sidebar a { flex-shrink: 0; padding: 6px 12px; border-bottom: none; border-right: 1px solid #f0e6ff; font-size: 11px; }
       .lower { flex-direction: column; }
       .profile-wrap { width: 100%; }
+      .profile-img { width: 100%; }
       .calendar-wrap { width: 100%; }
       .social-grid { grid-template-columns: repeat(2, 1fr); }
       .yt-grid { grid-template-columns: 1fr; }
@@ -129,56 +138,56 @@
       </div>
 
       <div class="tab-content active" id="tab-profile">
-        <div class="lower">
-          <div class="profile-wrap">
-            <img class="profile-img" id="profile-img" src="" alt="Profile">
-          </div>
-          <div class="calendar-wrap">
-            <div class="cal-label">SCHEDULE</div>
-            <div class="calendar">
-              <div class="cal-header">
-                <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
-                <select id="cal-month" onchange="renderCalendar()">
-                  <option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option>
-                  <option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option>
-                  <option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option>
-                  <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
-                </select>
-                <select id="cal-year" onchange="renderCalendar()">
-                  <option>2024</option><option selected>2025</option><option>2026</option>
-                </select>
-                <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
-              </div>
-              <div class="cal-grid" id="cal-grid"></div>
-            </div>
+        <img class="profile-img" id="profile-img" src="" alt="Profile">
+        <p class="bio-text" id="bio-text"></p>
+
+        <div class="social-section">
+          <div class="social-grid" id="social-grid">
+            <div><div class="s-name">IG</div><div class="social-thumb" style="background:#ddd"></div></div>
+            <div><div class="s-name">X</div><div class="social-thumb" style="background:#ddd"></div></div>
+            <div><div class="s-name">TIKTOK</div><div class="social-thumb" style="background:#ddd"></div></div>
+            <div><div class="s-name">WEIBO</div><div class="social-thumb" style="background:#ddd"></div></div>
           </div>
         </div>
-        <p class="bio-text" id="bio-text"></p>
+
+        <div class="yt-section">
+          <div class="yt-label">OFFICIAL VIDEO</div>
+          <div class="yt-grid" id="yt-grid">
+            <div class="yt-thumb" style="background:#ddd"></div>
+            <div class="yt-thumb" style="background:#ddd"></div>
+          </div>
+        </div>
       </div>
 
       <div class="tab-content" id="tab-works">
-        <div class="works-grid" id="works-grid"><div class="loading">กำลังโหลด...</div></div>
+        <div class="works-section">
+          <div class="cal-label" style="margin-bottom:8px">SCHEDULE</div>
+          <div class="calendar" style="margin-bottom:8px">
+            <div class="cal-header">
+              <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
+              <select id="cal-month" onchange="renderCalendar()">
+                <option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option>
+                <option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option>
+                <option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option>
+                <option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option>
+              </select>
+              <select id="cal-year" onchange="renderCalendar()">
+                <option>2024</option><option selected>2025</option><option>2026</option>
+              </select>
+              <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+          </div>
+          <div id="event-detail" style="display:none; border:1px solid #d8b4fe; border-radius:8px; padding:12px; background:#fff; margin-bottom:14px;">
+            <div id="event-date-title" style="font-size:12px; font-weight:800; color:#7c3aed; margin-bottom:10px;"></div>
+            <div id="event-list"></div>
+          </div>
+          <div class="works-grid" id="works-grid"><div class="loading">กำลังโหลด...</div></div>
+        </div>
       </div>
 
       <div class="tab-content" id="tab-news">
         <div id="news-list"><div class="loading">กำลังโหลด...</div></div>
-      </div>
-
-      <div class="social-section">
-        <div class="social-grid" id="social-grid">
-          <div><div class="s-name">IG</div><div class="social-thumb" style="background:#ddd"></div></div>
-          <div><div class="s-name">X</div><div class="social-thumb" style="background:#ddd"></div></div>
-          <div><div class="s-name">TIKTOK</div><div class="social-thumb" style="background:#ddd"></div></div>
-          <div><div class="s-name">WEIBO</div><div class="social-thumb" style="background:#ddd"></div></div>
-        </div>
-      </div>
-
-      <div class="yt-section">
-        <div class="yt-label">OFFICIAL VIDEO</div>
-        <div class="yt-grid" id="yt-grid">
-          <div class="yt-thumb" style="background:#ddd"></div>
-          <div class="yt-thumb" style="background:#ddd"></div>
-        </div>
       </div>
 
     </div>
@@ -346,10 +355,37 @@ async function loadVideos() {
   ).join("");
 }
 
+let scheduleEvents = []; // [{date, title, location, time, livestream, with}]
+
 async function loadSchedule() {
   const rows = await fetchCSV(GID.schedule);
-  scheduleDates = rows.map(r => r[0]).filter(Boolean);
+  scheduleEvents = rows.filter(r => r[0]).map(r => ({
+    date: r[0], title: r[1]||'', location: r[2]||'', time: r[3]||'', livestream: r[4]||'', with: r[5]||''
+  }));
+  scheduleDates = [...new Set(scheduleEvents.map(e => e.date))];
   renderCalendar();
+}
+
+function showEvents(dateStr) {
+  const events = scheduleEvents.filter(e => e.date === dateStr);
+  const detail = document.getElementById("event-detail");
+  const list = document.getElementById("event-list");
+  const title = document.getElementById("event-date-title");
+  if (!events.length) { detail.style.display = "none"; return; }
+  const [y, m, d] = dateStr.split("-");
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  title.textContent = d + " " + months[parseInt(m)-1] + " " + y;
+  list.innerHTML = events.map(e =>
+    '<div class="event-item">' +
+    '<div class="e-name">' + e.title + '</div>' +
+    (e.location ? '<div class="e-row"><span>Location :</span>' + e.location + '</div>' : '') +
+    (e.time ? '<div class="e-row"><span>Time :</span>' + e.time + '</div>' : '') +
+    (e.livestream ? '<div class="e-row"><span>Live Streaming :</span><a href="' + e.livestream + '" target="_blank" style="color:#7c3aed">' + e.livestream + '</a></div>' : '') +
+    (e.with ? '<div class="e-row"><span>With :</span>' + e.with + '</div>' : '') +
+    '</div>'
+  ).join("");
+  detail.style.display = "block";
+  document.querySelectorAll(".cal-grid .day").forEach(el => el.classList.remove("selected"));
 }
 
 function renderCalendar() {
@@ -366,11 +402,13 @@ function renderCalendar() {
     const isToday = d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
     const isEvent = scheduleDates.includes(dateStr);
     const cls = isToday ? "today" : isEvent ? "highlight" : "";
-    html += '<div class="day ' + cls + '">' + d + '</div>';
+    const dot = isEvent ? '<span class="event-dot"></span>' : '';
+    html += '<div class="day ' + cls + '" onclick="showEvents(\'' + dateStr + '\', this)">' + d + dot + '</div>';
   }
   const remaining = (7 - (firstDay + daysInMonth) % 7) % 7;
   for (let i = 1; i <= remaining; i++) html += '<div class="day muted">' + i + '</div>';
   document.getElementById("cal-grid").innerHTML = html;
+  if (document.getElementById("event-detail")) document.getElementById("event-detail").style.display = "none";
 }
 
 function changeMonth(dir) {
