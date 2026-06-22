@@ -90,10 +90,10 @@
 
     .yt-section { margin-top: 14px; }
     .yt-label { font-size: 11px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; margin-bottom: 8px; }
-    .yt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .yt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     /* Video thumbnail — aspect ratio 16:9 (640×360) */
     .yt-thumb { border-radius: 8px; width: 100%; aspect-ratio: 16/9; object-fit: cover; object-position: center; background: #ddd; display: block; }
-    .yt-link { text-decoration: none; }
+    .yt-link { text-decoration: none; display: block; }
     .yt-title { font-size: 12px; color: #444; margin-top: 4px; font-weight: 500; line-height: 1.4; }
 
     .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
@@ -130,6 +130,8 @@
       .social-grid > div { flex-shrink: 0; width: 140px; }
       .works-cal-row { flex-direction: column; }
       .works-cal-left { width: 100%; }
+      .yt-grid { display: flex; grid-template-columns: unset; flex-direction: row; overflow-x: auto; flex-wrap: nowrap; gap: 10px; }
+      .yt-link { flex-shrink: 0; width: 70vw; }
       .yt-page-grid { grid-template-columns: repeat(2, 1fr); }
       .contact-list { grid-template-columns: 1fr; }
       .works-grid { grid-template-columns: 1fr; }
