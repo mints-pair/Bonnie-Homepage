@@ -42,13 +42,14 @@
     .lower { display: flex; gap: 12px; align-items: flex-start; }
     .profile-wrap { flex: 1; min-width: 0; }
     /* Profile slider */
-    .profile-slider-wrap { position: relative; }
+    .profile-slider-wrap { position: relative; padding: 0 2px; }
     .profile-slider { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 8px; cursor: grab; scroll-behavior: smooth; }
     .profile-slider::-webkit-scrollbar { display: none; }
-    .profile-img { border-radius: 8px; width: calc((100% - 12px) * 3/5); aspect-ratio: 210/297; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; flex-shrink: 0; scroll-snap-align: start; }
-    .profile-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(124,58,237,0.85); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; }
+    .profile-img { border-radius: 8px; width: calc((100% - 12px) / 2); aspect-ratio: 210/297; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; flex-shrink: 0; scroll-snap-align: start; }
+    .profile-nav { position: absolute; top: 40%; transform: translateY(-50%); background: rgba(124,58,237,0.85); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; transition: opacity 0.2s; }
     .profile-nav.left { left: -14px; }
     .profile-nav.right { right: -14px; }
+    .profile-nav.hidden { opacity: 0; pointer-events: none; }
     .bio-text { font-size: 13px; color: #555; line-height: 1.7; margin-top: 8px; }
 
     .calendar-wrap { width: 33%; flex-shrink: 0; }
@@ -335,7 +336,12 @@ async function loadConfig() {
     if (!imgs && cfg.profile_img_url) {
       imgs = '<img class="profile-img" src="' + convertDriveUrl(cfg.profile_img_url) + '" alt="Profile">';
     }
-    if (imgs) slider.innerHTML = imgs;
+    if (imgs) {
+      slider.innerHTML = imgs;
+      // อัปเดตปุ่มหลังโหลดรูป
+      setTimeout(updateProfileNav, 100);
+      slider.addEventListener("scroll", updateProfileNav, { passive: true });
+    }
 
     // drag to scroll (คอม)
     let isDown = false, startX = 0, scrollLeft = 0;
@@ -450,10 +456,22 @@ async function loadSocials() {
   ).join("");
 }
 
+function updateProfileNav() {
+  const slider = document.getElementById("profile-slider");
+  const btnLeft = document.querySelector(".profile-nav.left");
+  const btnRight = document.querySelector(".profile-nav.right");
+  if (!slider || !btnLeft || !btnRight) return;
+  const atStart = slider.scrollLeft <= 4;
+  const atEnd = slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 4;
+  btnLeft.classList.toggle("hidden", atStart);
+  btnRight.classList.toggle("hidden", atEnd);
+}
+
 function scrollProfile(dir) {
   const slider = document.getElementById("profile-slider");
   const imgWidth = slider.querySelector(".profile-img")?.offsetWidth || 0;
   slider.scrollBy({ left: dir * (imgWidth + 12), behavior: "smooth" });
+  setTimeout(updateProfileNav, 350);
 }
 
 function showPage(page, el) {
