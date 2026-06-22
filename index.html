@@ -64,15 +64,16 @@
     .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
     .cal-header select { border: 1px solid #d8b4fe; border-radius: 4px; padding: 2px 6px; font-size: 12px; color: #555; background: #fff; }
     .cal-nav { background: none; border: none; font-size: 16px; cursor: pointer; color: #7c3aed; padding: 0 4px; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
-    .cal-grid .day-label { font-size: 10px; color: #888; padding: 2px 0; }
-    .cal-grid .day { font-size: 11px; padding: 4px 2px; border-radius: 4px; cursor: pointer; color: #444; position: relative; }
-    .cal-grid .day:hover { background: #f0e6ff; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .cal-grid .day-label { font-size: 10px; color: #888; padding: 4px 0; }
+    .cal-grid .day { font-size: 11px; padding: 7px 2px; border-radius: 4px; cursor: pointer; color: #444; position: relative; }
+    .cal-grid .day:hover { background: #f0e6ff; box-shadow: 0 2px 6px rgba(124,58,237,0.15); }
     .cal-grid .day.today { background: #1a1a1a; color: #fff; }
-    .cal-grid .day.highlight { background: none; color: #444; }
+    .cal-grid .day.highlight { background: #7c3aed; color: #fff; }
+    .cal-grid .day.highlight:hover { background: #6d28d9; box-shadow: 0 2px 8px rgba(124,58,237,0.35); }
     .cal-grid .day.selected { outline: 2px solid #7c3aed; }
     .cal-grid .day.muted { color: #ccc; }
-    .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #7c3aed; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%); }
+    .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); }
     .day.today .event-dot { background: #fff; }
     .event-item { border-bottom: 1px solid #f0e6ff; padding: 8px 0; }
     .event-item:last-child { border-bottom: none; }
@@ -231,7 +232,7 @@
               </div>
             </div>
           </div>
-          <div class="works-grid" id="works-grid" style="margin-top:14px"><div class="loading">กำลังโหลด...</div></div>
+          <div class="works-grid" id="works-grid" style="margin-top:14px"></div>
         </div>
       </div>
 
@@ -461,7 +462,7 @@ function startSlider() {
 async function loadWorks() {
   const rows = await fetchCSV(GID.works);
   const grid = document.getElementById("works-grid");
-  if (!rows.length) { grid.innerHTML = "<div class='loading'>ยังไม่มีข้อมูล</div>"; return; }
+  if (!rows.length || !grid) return;
   grid.innerHTML = rows.map(r =>
     '<div class="work-item"><a href="' + (r[2]||'#') + '" target="_blank"><img src="' + convertDriveUrl(r[1]) + '" alt="' + r[0] + '"></a><div class="work-title">' + r[0] + '</div></div>'
   ).join("");
