@@ -69,11 +69,11 @@
     .cal-grid .day { font-size: 11px; padding: 7px 2px; border-radius: 4px; cursor: pointer; color: #444; position: relative; }
     .cal-grid .day:hover { background: #f0e6ff; box-shadow: 0 2px 6px rgba(124,58,237,0.15); }
     .cal-grid .day.today { background: #1a1a1a; color: #fff; }
-    .cal-grid .day.highlight { background: #7c3aed; color: #fff; }
-    .cal-grid .day.highlight:hover { background: #6d28d9; box-shadow: 0 2px 8px rgba(124,58,237,0.35); }
+    .cal-grid .day.highlight { background: none; color: #444; }
+    .cal-grid .day.highlight:hover { background: #f0e6ff; box-shadow: 0 2px 6px rgba(124,58,237,0.15); }
     .cal-grid .day.selected { outline: 2px solid #7c3aed; }
     .cal-grid .day.muted { color: #ccc; }
-    .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); }
+    .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #7c3aed; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); }
     .day.today .event-dot { background: #fff; }
     .event-item { border-bottom: 1px solid #f0e6ff; padding: 8px 0; }
     .event-item:last-child { border-bottom: none; }
@@ -371,7 +371,7 @@ async function loadConfig() {
   }
   if (cfg.highlight_color) {
     const style = document.createElement("style");
-    style.textContent = ".cal-grid .day.highlight { background: " + cfg.highlight_color + " !important; } .cal-grid .day.highlight:hover { background: " + cfg.highlight_color + " !important; filter: brightness(0.9); }";
+    style.textContent = ".event-dot { background: " + cfg.highlight_color + " !important; } .day.today .event-dot { background: #fff !important; }";
     document.head.appendChild(style);
   }
 
