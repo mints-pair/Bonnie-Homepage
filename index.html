@@ -35,7 +35,7 @@
     .content { flex: 1; padding: 12px; min-width: 0; }
 
     .tabs-row { display: flex; margin: 14px 0 10px; border-bottom: 2px solid #e5e5e5; }
-    .tab { padding: 6px 16px; font-size: 16px; font-weight: 700; color: #888; cursor: pointer; letter-spacing: .5px; }
+    .tab { padding: 6px 16px; font-size: 12px; font-weight: 700; color: #888; cursor: pointer; letter-spacing: .5px; }
     .tab.active { color: #7c3aed; border-bottom: 2px solid #7c3aed; margin-bottom: -2px; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -97,7 +97,9 @@
     .yt-link { text-decoration: none; display: block; }
     .yt-title { color: #444; margin-top: 4px; font-weight: 500; line-height: 1.4; }
 
-    .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
+    .cal-notice { margin-top: 12px; padding: 10px 14px; background: #fdf4ff; border: 1px solid #e9d5ff; border-radius: 8px; font-size: 12px; color: #6b21a8; line-height: 1.6; }
+    .cal-notice i { margin-right: 6px; vertical-align: -2px; }
+    .cal-notice span { color: #9333ea; font-size: 11px; }
     .contact-label { font-weight: 800; letter-spacing: 1px; margin-bottom: 16px; }
     .contact-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .contact-item { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #fff; border: 1px solid #f0e6ff; border-radius: 12px; padding: 14px 16px; transition: background 0.15s; }
@@ -233,6 +235,11 @@
             </div>
           </div>
           <div class="works-grid" id="works-grid" style="margin-top:14px"></div>
+          <div class="cal-notice">
+            <i class="ti ti-info-circle" aria-hidden="true"></i>
+            งดติดตามศิลปินนอกเวลางาน ห้ามดักรอศิลปินบริเวณห้องพักหรือลานจอดรถ และตึกสังกัด<br>
+            <span>Please refrain from following the artists outside of work hours. Please do not wait for the artists near their residences, parking lots and company building.</span>
+          </div>
         </div>
       </div>
 
