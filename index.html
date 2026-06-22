@@ -38,8 +38,8 @@
 
     .lower { display: flex; gap: 12px; align-items: flex-start; }
     .profile-wrap { flex: 1; min-width: 0; }
-    /* Profile — A4 ratio (210×297) แนวตั้ง */
-    .profile-img { border-radius: 8px; width: 40%; aspect-ratio: 210/297; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; margin: 0 auto; }
+    /* Profile — landscape on desktop (16:9) */
+    .profile-img { border-radius: 8px; width: 100%; aspect-ratio: 16/9; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; margin: 0 auto; }
     .bio-text { font-size: 13px; color: #555; line-height: 1.7; margin-top: 8px; }
 
     .calendar-wrap { width: 33%; flex-shrink: 0; }
@@ -95,7 +95,7 @@
       .sidebar a { flex-shrink: 0; padding: 6px 12px; border-bottom: none; border-right: 1px solid #f0e6ff; font-size: 11px; }
       .lower { flex-direction: column; }
       .profile-wrap { width: 100%; }
-      .profile-img { width: 100%; }
+      .profile-img { width: 100%; aspect-ratio: 210/297; }
       .calendar-wrap { width: 100%; }
       .social-grid { grid-template-columns: repeat(2, 1fr); }
       .yt-grid { grid-template-columns: 1fr; }
@@ -389,9 +389,27 @@ function showEvents(dateStr) {
 }
 
 function renderCalendar() {
-  const month = parseInt(document.getElementById("cal-month").value);
-  const year = parseInt(document.getElementById("cal-year").value);
   const today = new Date();
+  const selMonth = document.getElementById("cal-month");
+  const selYear = document.getElementById("cal-year");
+
+  // ถ้ายังไม่เคย set ให้ใช้เดือนปัจจุบัน
+  if (!selMonth.dataset.initialized) {
+    selMonth.value = today.getMonth();
+    selYear.value = today.getFullYear();
+    // เพิ่ม option ปีปัจจุบันถ้ายังไม่มี
+    if (![...selYear.options].some(o => parseInt(o.value) === today.getFullYear())) {
+      const opt = document.createElement("option");
+      opt.value = today.getFullYear();
+      opt.textContent = today.getFullYear();
+      selYear.appendChild(opt);
+      selYear.value = today.getFullYear();
+    }
+    selMonth.dataset.initialized = "1";
+  }
+
+  const month = parseInt(selMonth.value);
+  const year = parseInt(selYear.value);
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const days = ["Su","Mo","Tu","We","Th","Fr","Sa"];
