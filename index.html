@@ -82,6 +82,7 @@
 
     .social-section { margin-top: 14px; }
     .social-grid { display: flex; flex-direction: row; gap: 10px; flex-wrap: nowrap; overflow-x: auto; }
+    .social-grid > div { flex-shrink: 0; width: 200px; }
     .s-name { font-size: 11px; font-weight: 800; color: #7c3aed; letter-spacing: .5px; margin-bottom: 4px; }
     /* Socials — aspect ratio 1:1 (200×200) */
     .social-thumb { border-radius: 8px; width: 100%; aspect-ratio: 1/1; max-width: 200px; object-fit: cover; object-position: center; background: #ddd; display: block; }
@@ -125,8 +126,8 @@
       .profile-wrap { width: 100%; }
       .profile-img { width: calc((100% - 12px) * 3/4); aspect-ratio: 210/297; }
       .calendar-wrap { width: 100%; }
-      .social-grid { display: grid; grid-template-columns: repeat(2, 1fr); flex-direction: unset; overflow-x: unset; flex-wrap: unset; }
-      .social-grid > div { flex-shrink: unset; width: unset; }
+      .social-grid { display: flex; grid-template-columns: unset; flex-direction: row; overflow-x: auto; flex-wrap: nowrap; }
+      .social-grid > div { flex-shrink: 0; width: 140px; }
       .works-cal-row { flex-direction: column; }
       .works-cal-left { width: 100%; }
       .yt-page-grid { grid-template-columns: repeat(2, 1fr); }
