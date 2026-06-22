@@ -69,11 +69,11 @@
     .cal-grid .day { font-size: 11px; padding: 4px 2px; border-radius: 4px; cursor: pointer; color: #444; position: relative; }
     .cal-grid .day:hover { background: #f0e6ff; }
     .cal-grid .day.today { background: #1a1a1a; color: #fff; }
-    .cal-grid .day.highlight { background: #7c3aed; color: #fff; }
+    .cal-grid .day.highlight { background: none; color: #444; }
     .cal-grid .day.selected { outline: 2px solid #7c3aed; }
     .cal-grid .day.muted { color: #ccc; }
-    .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #f472b6; position: absolute; bottom: 1px; left: 50%; transform: translateX(-50%); }
-    .day.highlight .event-dot { background: #fff; }
+    .event-dot { width: 5px; height: 5px; border-radius: 50%; background: #7c3aed; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%); }
+    .day.today .event-dot { background: #fff; }
     .event-item { border-bottom: 1px solid #f0e6ff; padding: 8px 0; }
     .event-item:last-child { border-bottom: none; }
     .event-item .e-name { font-size: 13px; font-weight: 700; color: #3b0764; margin-bottom: 4px; }
@@ -349,6 +349,47 @@ async function loadConfig() {
     document.getElementById("nav-logo").textContent = cfg.site_name;
     document.title = cfg.site_name;
   }
+
+  // ฟ้อนและสีตัวหนังสือ
+  if (cfg.font_family) {
+    const systemFonts = ["Arial","Helvetica","Georgia","sans-serif","serif","monospace","Tahoma","Verdana"];
+    if (!systemFonts.includes(cfg.font_family)) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=" + cfg.font_family.replace(/ /g, "+") + "&display=swap";
+      document.head.appendChild(link);
+    }
+    document.body.style.fontFamily = cfg.font_family + ", sans-serif";
+  }
+  if (cfg.font_size) document.body.style.fontSize = cfg.font_size;
+  if (cfg.font_color) document.body.style.color = cfg.font_color;
+  if (cfg.heading_color) {
+    const style = document.createElement("style");
+    style.textContent = ".cal-label,.yt-label,.s-name,.contact-label,.yt-page-label,.sidebar a,.tab.active,.contact-handle,.work-title { color: " + cfg.heading_color + " !important; } .navbar { background: " + (cfg.navbar_color || "#c084fc") + "; }";
+    document.head.appendChild(style);
+  }
+
+  // ฟ้อนแยกแต่ละหน้า
+  window._pageFonts = {
+    home:    { font: cfg.font_home    || cfg.font_family || "", size: cfg.font_size_home    || cfg.font_size || "", color: cfg.font_color_home    || cfg.font_color || "" },
+    youtube: { font: cfg.font_youtube || cfg.font_family || "", size: cfg.font_size_youtube || cfg.font_size || "", color: cfg.font_color_youtube || cfg.font_color || "" },
+    works:   { font: cfg.font_works   || cfg.font_family || "", size: cfg.font_size_works   || cfg.font_size || "", color: cfg.font_color_works   || cfg.font_color || "" },
+    news:    { font: cfg.font_news    || cfg.font_family || "", size: cfg.font_size_news    || cfg.font_size || "", color: cfg.font_color_news    || cfg.font_color || "" },
+    contact: { font: cfg.font_contact || cfg.font_family || "", size: cfg.font_size_contact || cfg.font_size || "", color: cfg.font_color_contact || cfg.font_color || "" }
+  };
+
+  // โหลด Google Fonts ทุกฟ้อนที่ต้องใช้
+  const allFonts = [...new Set(Object.values(window._pageFonts).map(p => p.font).filter(Boolean))];
+  const systemFonts2 = ["Arial","Helvetica","Georgia","sans-serif","serif","monospace","Tahoma","Verdana"];
+  allFonts.filter(f => !systemFonts2.includes(f)).forEach(f => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=" + f.replace(/ /g, "+") + "&display=swap";
+    document.head.appendChild(link);
+  });
+
+  // เปลี่ยนฟ้อนตามหน้าปัจจุบัน
+  applyPageFont("home");
 }
 
 async function loadSlider() {
@@ -480,12 +521,22 @@ function scrollProfile(dir) {
   setTimeout(updateProfileNav, 350);
 }
 
+function applyPageFont(page) {
+  if (!window._pageFonts) return;
+  const p = window._pageFonts[page];
+  if (!p) return;
+  if (p.font)  document.body.style.fontFamily = p.font + ", sans-serif";
+  if (p.size)  document.body.style.fontSize = p.size;
+  if (p.color) document.body.style.color = p.color;
+}
+
 function showPage(page, el) {
   document.getElementById("page-home").style.display = page === "home" ? "block" : "none";
   document.getElementById("page-youtube").style.display = page === "youtube" ? "block" : "none";
   document.getElementById("page-contact").style.display = page === "contact" ? "block" : "none";
   document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active-menu"));
   if (el) el.classList.add("active-menu");
+  applyPageFont(page);
 }
 
 function getYoutubeThumbnail(url) {
