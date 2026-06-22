@@ -41,8 +41,11 @@
 
     .lower { display: flex; gap: 12px; align-items: flex-start; }
     .profile-wrap { flex: 1; min-width: 0; }
-    /* Profile — landscape on desktop (16:9) */
-    .profile-img { border-radius: 8px; width: 100%; aspect-ratio: 16/9; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; margin: 0 auto; }
+    /* Profile slider — A4 แนวตั้ง ชิดซ้าย */
+    .profile-slider { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 8px; cursor: grab; }
+    .profile-slider::-webkit-scrollbar { height: 4px; }
+    .profile-slider::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 4px; }
+    .profile-img { border-radius: 8px; width: calc(210px * 1.2); aspect-ratio: 210/297; border: 2px solid #7c3aed; object-fit: cover; object-position: center; background: #ddd; display: block; flex-shrink: 0; scroll-snap-align: start; }
     .bio-text { font-size: 13px; color: #555; line-height: 1.7; margin-top: 8px; }
 
     .calendar-wrap { width: 33%; flex-shrink: 0; }
@@ -109,7 +112,7 @@
       .sidebar a { flex-shrink: 0; padding: 6px 12px; border-bottom: none; border-right: 1px solid #f0e6ff; font-size: 11px; }
       .lower { flex-direction: column; }
       .profile-wrap { width: 100%; }
-      .profile-img { width: 100%; aspect-ratio: 210/297; }
+      .profile-img { width: calc(60vw); aspect-ratio: 210/297; }
       .calendar-wrap { width: 100%; }
       .social-grid { grid-template-columns: repeat(2, 1fr); }
       .yt-page-grid { grid-template-columns: repeat(2, 1fr); }
@@ -156,7 +159,9 @@
       </div>
 
       <div class="tab-content active" id="tab-profile">
-        <img class="profile-img" id="profile-img" src="" alt="Profile">
+        <div class="profile-slider" id="profile-slider">
+          <!-- รูปโปรไฟล์จะโหลดจาก Sheets -->
+        </div>
         <p class="bio-text" id="bio-text"></p>
 
         <div class="social-section">
@@ -311,9 +316,35 @@ async function loadConfig() {
   const rows = await fetchCSV(GID.config);
   const cfg = {};
   rows.forEach(r => { if(r[0]) cfg[r[0]] = r[1]; });
-  if (cfg.profile_img_url) {
-    document.getElementById("profile-img").src = convertDriveUrl(cfg.profile_img_url);
+
+  // โหลดรูปโปรไฟล์หลายรูป (profile_img_1, profile_img_2, ...)
+  const slider = document.getElementById("profile-slider");
+  if (slider) {
+    let imgs = "";
+    let i = 1;
+    while (cfg["profile_img_" + i]) {
+      imgs += '<img class="profile-img" src="' + convertDriveUrl(cfg["profile_img_" + i]) + '" alt="Profile ' + i + '">';
+      i++;
+    }
+    // fallback ถ้าใช้ key เก่า profile_img_url
+    if (!imgs && cfg.profile_img_url) {
+      imgs = '<img class="profile-img" src="' + convertDriveUrl(cfg.profile_img_url) + '" alt="Profile">';
+    }
+    if (imgs) slider.innerHTML = imgs;
+
+    // drag to scroll (คอม)
+    let isDown = false, startX = 0, scrollLeft = 0;
+    slider.addEventListener("mousedown", e => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; slider.style.cursor = "grabbing"; });
+    slider.addEventListener("mouseleave", () => { isDown = false; slider.style.cursor = "grab"; });
+    slider.addEventListener("mouseup", () => { isDown = false; slider.style.cursor = "grab"; });
+    slider.addEventListener("mousemove", e => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      slider.scrollLeft = scrollLeft - (x - startX);
+    });
   }
+
   if (cfg.bio) document.getElementById("bio-text").textContent = cfg.bio;
   if (cfg.navbar_color) document.querySelector(".navbar").style.background = cfg.navbar_color;
   if (cfg.site_name) {
