@@ -8,8 +8,19 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background: #f5f5f5; min-height: 100vh; }
 
-    .top-banner { height: 200px; overflow: hidden; background: #ddd; }
-    .top-banner img { width: 100%; height: 200px; object-fit: cover; object-position: center; }
+    /* Loading Spinner */
+    #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+    .spinner { width: 44px; height: 44px; border: 4px solid #f0e6ff; border-top: 4px solid #7c3aed; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .spinner-text { margin-top: 12px; font-size: 13px; color: #7c3aed; font-weight: 500; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Banner Slider */
+    .top-banner { position: relative; height: 200px; overflow: hidden; background: #ddd; cursor: grab; user-select: none; }
+    .top-banner img { position: absolute; top: 0; left: 0; width: 100%; height: 200px; object-fit: cover; object-position: center; display: none; pointer-events: none; }
+    .top-banner img.active { display: block; }
+    .banner-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.6); cursor: pointer; }
+    .dot.active { background: #7c3aed; }
 
     .navbar { background: #c084fc; display: flex; align-items: center; padding: 0 16px; height: 44px; }
     .nav-logo { font-size: 13px; color: #fff; font-weight: 700; font-style: italic; }
@@ -21,14 +32,6 @@
     .sidebar a:hover { background: #f5f0ff; }
 
     .content { flex: 1; padding: 12px; min-width: 0; }
-
-    /* Slider — aspect ratio 6:1 (1200×200) */
-    .slider-box { position: relative; aspect-ratio: 6/1; border-radius: 8px; overflow: hidden; background: #ddd; cursor: grab; user-select: none; }
-    .slider-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: none; pointer-events: none; }
-    .slider-box img.active { display: block; }
-    .slider-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.6); cursor: pointer; }
-    .dot.active { background: #7c3aed; }
 
     .tabs-row { display: flex; margin: 14px 0 10px; border-bottom: 2px solid #e5e5e5; }
     .tab { padding: 6px 16px; font-size: 12px; font-weight: 700; color: #888; cursor: pointer; letter-spacing: .5px; }
@@ -115,8 +118,13 @@
 </head>
 <body>
 
-  <div class="top-banner">
-    <img id="banner-img" src="" alt="Banner">
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <div class="spinner-text">กำลังโหลด...</div>
+  </div>
+
+  <div class="top-banner" id="banner-box">
+    <div class="banner-dots" id="banner-dots"></div>
   </div>
 
   <nav class="navbar">
@@ -134,10 +142,6 @@
 
       <!-- หน้า HOME -->
       <div id="page-home">
-
-      <div class="slider-box" id="slider-box">
-        <div class="slider-dots" id="slider-dots"></div>
-      </div>
 
       <div class="tabs-row">
         <div class="tab active" onclick="switchTab('profile',this)">PROFILE</div>
@@ -259,10 +263,6 @@ async function loadConfig() {
   const rows = await fetchCSV(GID.config);
   const cfg = {};
   rows.forEach(r => { if(r[0]) cfg[r[0]] = r[1]; });
-  if (cfg.banner_url) {
-    const img = document.getElementById("banner-img");
-    img.src = convertDriveUrl(cfg.banner_url);
-  }
   if (cfg.profile_img_url) {
     document.getElementById("profile-img").src = convertDriveUrl(cfg.profile_img_url);
   }
@@ -277,8 +277,8 @@ async function loadConfig() {
 async function loadSlider() {
   const rows = await fetchCSV(GID.slider);
   sliderImages = rows.map(r => convertDriveUrl(r[0])).filter(Boolean);
-  const box = document.getElementById("slider-box");
-  const dotsEl = document.getElementById("slider-dots");
+  const box = document.getElementById("banner-box");
+  const dotsEl = document.getElementById("banner-dots");
   if (!sliderImages.length) return;
 
   sliderImages.forEach((src, i) => {
@@ -296,8 +296,8 @@ async function loadSlider() {
 }
 
 function goSlide(i) {
-  const imgs = document.querySelectorAll("#slider-box img");
-  const dots = document.querySelectorAll("#slider-dots .dot");
+  const imgs = document.querySelectorAll("#banner-box img");
+  const dots = document.querySelectorAll("#banner-dots .dot");
   imgs.forEach(el => el.classList.remove("active"));
   dots.forEach(el => el.classList.remove("active"));
   sliderIndex = (i + sliderImages.length) % sliderImages.length;
@@ -310,7 +310,7 @@ function startSlider() {
   clearInterval(sliderTimer);
   sliderTimer = setInterval(() => goSlide(sliderIndex + 1), 3000);
 
-  const box = document.getElementById("slider-box");
+  const box = document.getElementById("banner-box");
 
   // Touch swipe (มือถือ)
   let startX = 0;
@@ -509,6 +509,13 @@ async function init() {
     loadConfig(), loadSlider(), loadWorks(),
     loadNews(), loadSocials(), loadVideos(), loadSchedule()
   ]);
+  // ซ่อน spinner หลังโหลดเสร็จ
+  const overlay = document.getElementById("loading-overlay");
+  if (overlay) {
+    overlay.style.opacity = "0";
+    overlay.style.transition = "opacity 0.3s";
+    setTimeout(() => overlay.style.display = "none", 300);
+  }
 }
 
 init();
