@@ -156,7 +156,7 @@
   </div>
 
   <nav class="navbar">
-    <span class="nav-logo">✿ Bonnie Official TH</span>
+    <span class="nav-logo" id="nav-logo">✿ Bonnie Official TH</span>
   </nav>
 
   <div class="main">
@@ -276,6 +276,10 @@ async function loadConfig() {
     document.getElementById("profile-img").src = convertDriveUrl(cfg.profile_img_url);
   }
   if (cfg.bio) document.getElementById("bio-text").textContent = cfg.bio;
+  if (cfg.site_name) {
+    document.getElementById("nav-logo").textContent = cfg.site_name;
+    document.title = cfg.site_name;
+  }
 }
 
 async function loadSlider() {
