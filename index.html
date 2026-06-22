@@ -90,7 +90,7 @@
 
     .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
     .contact-label { font-size: 13px; font-weight: 800; color: #7c3aed; letter-spacing: 1px; margin-bottom: 16px; }
-    .contact-list { display: flex; flex-direction: column; gap: 10px; max-width: 480px; }
+    .contact-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .contact-item { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #fff; border: 1px solid #f0e6ff; border-radius: 12px; padding: 14px 16px; transition: background 0.15s; }
     .contact-item:hover { background: #f5f0ff; }
     .contact-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0; }
@@ -120,6 +120,7 @@
       .calendar-wrap { width: 100%; }
       .social-grid { grid-template-columns: repeat(2, 1fr); }
       .yt-page-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-list { grid-template-columns: 1fr; }
       .works-grid { grid-template-columns: 1fr; }
       .work-item img { height: auto; aspect-ratio: 16/9; }
       .tab { padding: 10px 14px; font-size: 13px; }
@@ -232,42 +233,8 @@
       <!-- หน้า CONTACT US -->
       <div id="page-contact" style="display:none">
         <div class="contact-label">CONTACT US</div>
-        <div class="contact-list">
-          <a href="https://x.com/bonnieofficialth_" target="_blank" class="contact-item">
-            <div class="contact-icon" style="background:#000">𝕏</div>
-            <div class="contact-info">
-              <div class="contact-platform">X (Twitter)</div>
-              <div class="contact-handle">@bonnieofficialth_</div>
-            </div>
-          </a>
-          <a href="https://instagram.com/bonnieofficialth" target="_blank" class="contact-item">
-            <div class="contact-icon" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)">IG</div>
-            <div class="contact-info">
-              <div class="contact-platform">Instagram</div>
-              <div class="contact-handle">bonnieofficialth</div>
-            </div>
-          </a>
-          <a href="https://tiktok.com/@bonnieofficialth_" target="_blank" class="contact-item">
-            <div class="contact-icon" style="background:#010101">TK</div>
-            <div class="contact-info">
-              <div class="contact-platform">TikTok</div>
-              <div class="contact-handle">@bonnieofficialth_</div>
-            </div>
-          </a>
-          <a href="https://www.youtube.com/@BonnieOfficialTH" target="_blank" class="contact-item">
-            <div class="contact-icon" style="background:#ff0000">YT</div>
-            <div class="contact-info">
-              <div class="contact-platform">YouTube</div>
-              <div class="contact-handle">@BonnieOfficialTH</div>
-            </div>
-          </a>
-          <a href="#" class="contact-item">
-            <div class="contact-icon" style="background:#06c755">OC</div>
-            <div class="contact-info">
-              <div class="contact-platform">LINE OpenChat</div>
-              <div class="contact-handle">BONNIE_OFFICIALTH</div>
-            </div>
-          </a>
+        <div class="contact-list" id="contact-list">
+          <div class="loading">กำลังโหลด...</div>
         </div>
       </div>
 
@@ -287,7 +254,8 @@ const GID = {
   socials:  1571914792,
   videos:   1639743877,
   schedule: 1512851118,
-  youtube:  1689560596
+  youtube:  1689560596,
+  contact:  1062772734
 };
 
 let scheduleDates = [];
@@ -467,7 +435,24 @@ function updateProfileNav() {
   btnRight.classList.toggle("hidden", atEnd);
 }
 
-function scrollProfile(dir) {
+async function loadContact() {
+  const rows = await fetchCSV(GID.contact);
+  const list = document.getElementById("contact-list");
+  if (!rows.length || !list) return;
+  list.innerHTML = rows.map(r => {
+    const platform = r[0] || "";
+    const handle   = r[1] || "";
+    const url      = r[2] || "#";
+    const color    = r[3] || "#7c3aed";
+    const icon     = r[4] || platform.substring(0,2).toUpperCase();
+    return '<a href="' + url + '" target="_blank" class="contact-item">' +
+      '<div class="contact-icon" style="background:' + color + '">' + icon + '</div>' +
+      '<div class="contact-info">' +
+        '<div class="contact-platform">' + platform + '</div>' +
+        '<div class="contact-handle">' + handle + '</div>' +
+      '</div></a>';
+  }).join("");
+}
   const slider = document.getElementById("profile-slider");
   const imgWidth = slider.querySelector(".profile-img")?.offsetWidth || 0;
   slider.scrollBy({ left: dir * (imgWidth + 12), behavior: "smooth" });
@@ -616,7 +601,7 @@ async function init() {
   renderCalendar();
   await Promise.all([
     loadConfig(), loadSlider(), loadWorks(),
-    loadNews(), loadSocials(), loadVideos(), loadSchedule()
+    loadNews(), loadSocials(), loadVideos(), loadSchedule(), loadContact()
   ]);
   // ซ่อน spinner หลังโหลดเสร็จ
   const overlay = document.getElementById("loading-overlay");
