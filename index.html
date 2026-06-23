@@ -112,6 +112,16 @@
     .work-item img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; }
     .work-title { color: #7c3aed; font-weight: 700; margin-top: 4px; }
     .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
+    .rewards-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .rewards-table th { background: #f0e6ff; color: #7c3aed; font-weight: 700; padding: 8px 12px; text-align: left; border-bottom: 2px solid #d8b4fe; }
+    .rewards-table td { padding: 8px 12px; border-bottom: 1px solid #f0e6ff; color: #444; }
+    .rewards-table tr:last-child td { border-bottom: none; }
+    .rewards-table tr:hover td { background: #fdf4ff; }
+    .event-empty { color: #aaa; text-align: center; padding: 16px 0; font-size: 13px; line-height: 1.6; }
+    .event-empty span { font-size: 11px; display: block; }
+    /* desktop: แสดง notice ใต้ปฏิทิน ซ่อน mobile notice */
+    .cal-notice-mobile { display: none; }
+    #cal-notice-desktop { display: block; }
 
     @media (max-width: 640px) {
       .top-banner { height: 160px; }
@@ -127,6 +137,10 @@
       .social-grid > div { flex-shrink: 0; width: 140px; }
       .works-cal-row { flex-direction: column; }
       .works-cal-left { width: 100%; }
+      /* มือถือ: ซ่อน notice desktop แสดง mobile */
+      #cal-notice-desktop { display: none; }
+      .cal-notice-mobile { display: block; }
+      .rewards-table th, .rewards-table td { padding: 6px 8px; font-size: 12px; }
       .yt-grid { display: flex; grid-template-columns: unset; flex-direction: row; overflow-x: auto; flex-wrap: nowrap; gap: 10px; }
       .yt-link { flex-shrink: 0; width: calc((100vw - 48px) / 3); }
       .yt-page-grid { grid-template-columns: repeat(2, 1fr); }
@@ -215,18 +229,36 @@
                   </div>
                   <div class="cal-grid" id="cal-grid"></div>
                 </div>
+                <div class="cal-notice" id="cal-notice-desktop">
+                  งดติดตามศิลปินนอกเวลางาน ห้ามดักรอศิลปินบริเวณห้องพักหรือลานจอดรถ และตึกสังกัด<br>
+                  <span>Please refrain from following the artists outside of work hours. Please do not wait for the artists near their residences, parking lots and company building.</span>
+                </div>
               </div>
               <div class="works-cal-right">
-                <div id="event-detail" style="display:none; border:1px solid #d8b4fe; border-radius:8px; padding:12px; background:#fff; height:100%;">
+                <div id="event-detail" style="border:1px solid #d8b4fe; border-radius:8px; padding:12px; background:#fff; height:100%;">
                   <div id="event-date-title" style="font-size:12px; font-weight:800; color:#7c3aed; margin-bottom:10px;"></div>
-                  <div id="event-list"></div>
+                  <div id="event-list">
+                    <div class="event-empty">ไม่มีงานในวันนี้<br><span>No events scheduled for this day.</span></div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="works-grid" id="works-grid" style="margin-top:14px"></div>
-            <div class="cal-notice">
+
+            <!-- หมายเหตุ มือถือ -->
+            <div class="cal-notice cal-notice-mobile">
               งดติดตามศิลปินนอกเวลางาน ห้ามดักรอศิลปินบริเวณห้องพักหรือลานจอดรถ และตึกสังกัด<br>
               <span>Please refrain from following the artists outside of work hours. Please do not wait for the artists near their residences, parking lots and company building.</span>
+            </div>
+
+            <div class="cal-label" style="margin-top:18px; margin-bottom:8px">FILMOGRAPHY</div>
+            <div class="works-grid" id="works-grid"></div>
+
+            <div class="cal-label" style="margin-top:18px; margin-bottom:8px">REWARDS</div>
+            <div id="rewards-wrap">
+              <table class="rewards-table">
+                <thead><tr><th>Award</th><th>Date</th></tr></thead>
+                <tbody id="rewards-list"><tr><td colspan="2" class="loading">กำลังโหลด...</td></tr></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -265,7 +297,8 @@ const GID = {
   videos:   1639743877,
   schedule: 1512851118,
   youtube:  1689560596,
-  contact:  1062772734
+  contact:  1062772734,
+  rewards:  1847071245
 };
 
 let scheduleDates = [];
@@ -635,15 +668,38 @@ async function loadSchedule() {
   renderCalendar();
 }
 
+async function loadRewards() {
+  const rows = await fetchCSV(GID.rewards);
+  const tbody = document.getElementById("rewards-list");
+  const thead = document.querySelector(".rewards-table thead tr");
+  if (!tbody) return;
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#aaa;padding:12px">ยังไม่มีข้อมูล</td></tr>'; return; }
+  // เช็คว่ามีคอลัมน์ event ไหม
+  const hasEvent = rows.some(r => r[2]);
+  if (thead && hasEvent) thead.innerHTML = '<th>Award</th><th>Event</th><th>Date</th>';
+  else if (thead) thead.innerHTML = '<th>Award</th><th>Date</th>';
+  tbody.innerHTML = rows.map(r =>
+    hasEvent
+      ? '<tr><td>' + (r[0]||'') + '</td><td>' + (r[2]||'') + '</td><td style="white-space:nowrap">' + (r[1]||'') + '</td></tr>'
+      : '<tr><td>' + (r[0]||'') + '</td><td style="white-space:nowrap">' + (r[1]||'') + '</td></tr>'
+  ).join("");
+}
+
 function showEvents(dateStr) {
   const events = scheduleEvents.filter(e => e.date === dateStr);
-  const detail = document.getElementById("event-detail");
   const list = document.getElementById("event-list");
   const title = document.getElementById("event-date-title");
-  if (!events.length) { detail.style.display = "none"; return; }
+  const detail = document.getElementById("event-detail");
+  if (detail) detail.style.display = "block";
+
   const [y, m, d] = dateStr.split("-");
   const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  title.textContent = d + " " + months[parseInt(m)-1] + " " + y;
+  if (title) title.textContent = d + " " + months[parseInt(m)-1] + " " + y;
+
+  if (!events.length) {
+    list.innerHTML = '<div class="event-empty">ไม่มีงานในวันนี้<br><span>No events scheduled for this day.</span></div>';
+    return;
+  }
   list.innerHTML = events.map(e =>
     '<div class="event-item">' +
     '<div class="e-name">' + e.title + '</div>' +
@@ -654,7 +710,6 @@ function showEvents(dateStr) {
     (e.note ? '<div class="e-row"><span>Note :</span><span style="' + (e.note_color ? 'color:'+e.note_color : '') + '">' + e.note + '</span></div>' : '') +
     '</div>'
   ).join("");
-  detail.style.display = "block";
   document.querySelectorAll(".cal-grid .day").forEach(el => el.classList.remove("selected"));
 }
 
@@ -717,7 +772,7 @@ async function init() {
   renderCalendar();
   await Promise.all([
     loadConfig(), loadSlider(), loadWorks(),
-    loadNews(), loadSocials(), loadVideos(), loadSchedule(), loadContact()
+    loadNews(), loadSocials(), loadVideos(), loadSchedule(), loadContact(), loadRewards()
   ]);
   const overlay = document.getElementById("loading-overlay");
   if (overlay) {
