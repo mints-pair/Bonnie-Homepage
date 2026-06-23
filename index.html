@@ -317,7 +317,7 @@ function getSheetUrl(gid) {
 async function fetchCSV(gid) {
   try {
     const url = getSheetUrl(gid) + "&t=" + Date.now();
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url);
     const text = await res.text();
     return text.trim().split("\n").slice(1).map(row =>
       row.split(",").map(c => c.trim().replace(/^"|"$/g, ""))
@@ -490,7 +490,7 @@ async function loadConfig() {
       link.onload = resolve;
       link.onerror = resolve;
       document.head.appendChild(link);
-      setTimeout(resolve, 3000); // timeout 3 วินาที กัน font โหลดไม่เสร็จ
+      setTimeout(resolve, 1500); // timeout 1.5 วินาที กัน font โหลดไม่เสร็จ
     });
   });
   await Promise.all(fontPromises);
