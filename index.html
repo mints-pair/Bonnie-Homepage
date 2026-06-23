@@ -93,6 +93,18 @@
 
     .cal-notice { margin-top: 12px; padding: 10px 14px; background: #fdf4ff; border: 1px solid #e9d5ff; border-radius: 8px; font-size: 12px; color: #6b21a8; line-height: 1.6; }
     .cal-notice span { color: #9333ea; font-size: 11px; }
+
+    /* Calendar Popup */
+    .cal-popup-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center; }
+    .cal-popup-overlay.active { display: flex; }
+    .cal-popup-box { background: #fff; border: 1px solid #d8b4fe; border-radius: 12px; padding: 16px; width: 320px; max-width: 90vw; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(124,58,237,0.2); animation: popupIn 0.2s ease; }
+    @keyframes popupIn { from { opacity:0; transform: scale(0.95); } to { opacity:1; transform: scale(1); } }
+    .cal-popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .cal-popup-date { font-size: 13px; font-weight: 800; color: #7c3aed; }
+    .cal-popup-close { background: none; border: none; font-size: 20px; color: #aaa; cursor: pointer; padding: 0; line-height: 1; }
+    .cal-popup-close:hover { color: #7c3aed; }
+    .cal-popup-notice { margin-top: 12px; padding: 8px 10px; background: #fdf4ff; border: 1px solid #e9d5ff; border-radius: 8px; font-size: 11px; color: #6b21a8; line-height: 1.5; }
+    .cal-popup-notice span { color: #9333ea; font-size: 10px; display: block; margin-top: 2px; }
     .contact-label { font-weight: 800; letter-spacing: 1px; margin-bottom: 16px; }
     .contact-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .contact-item { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #fff; border: 1px solid #f0e6ff; border-radius: 12px; padding: 14px 16px; transition: background 0.15s; }
@@ -119,9 +131,6 @@
     .rewards-table tr:hover td { background: #fdf4ff; }
     .event-empty { color: #aaa; text-align: center; padding: 16px 0; font-size: 13px; line-height: 1.6; }
     .event-empty span { font-size: 11px; display: block; }
-    /* desktop: แสดง notice ใต้ปฏิทิน ซ่อน mobile notice */
-    .cal-notice-mobile { display: none; }
-    #cal-notice-desktop { display: block; }
 
     @media (max-width: 640px) {
       .top-banner { height: 160px; }
@@ -137,9 +146,6 @@
       .social-grid > div { flex-shrink: 0; width: 140px; }
       .works-cal-row { flex-direction: column; }
       .works-cal-left { width: 100%; }
-      /* มือถือ: ซ่อน notice desktop แสดง mobile */
-      #cal-notice-desktop { display: none; }
-      .cal-notice-mobile { display: block; }
       .rewards-table th, .rewards-table td { padding: 6px 8px; font-size: 12px; }
       .yt-grid { display: flex; grid-template-columns: unset; flex-direction: row; overflow-x: auto; flex-wrap: nowrap; gap: 10px; }
       .yt-link { flex-shrink: 0; width: calc((100vw - 48px) / 3); }
@@ -229,25 +235,23 @@
                   </div>
                   <div class="cal-grid" id="cal-grid"></div>
                 </div>
-                <div class="cal-notice" id="cal-notice-desktop">
+              </div>
+              <div class="works-cal-right"></div>
+            </div>
+
+            <!-- Popup overlay -->
+            <div class="cal-popup-overlay" id="cal-popup-overlay" onclick="closePopup(event)">
+              <div class="cal-popup-box">
+                <div class="cal-popup-header">
+                  <div class="cal-popup-date" id="cal-popup-date"></div>
+                  <button class="cal-popup-close" onclick="closePopup()">✕</button>
+                </div>
+                <div id="cal-popup-list"></div>
+                <div class="cal-popup-notice">
                   งดติดตามศิลปินนอกเวลางาน ห้ามดักรอศิลปินบริเวณห้องพักหรือลานจอดรถ และตึกสังกัด<br>
                   <span>Please refrain from following the artists outside of work hours. Please do not wait for the artists near their residences, parking lots and company building.</span>
                 </div>
               </div>
-              <div class="works-cal-right">
-                <div id="event-detail" style="border:1px solid #d8b4fe; border-radius:8px; padding:12px; background:#fff; height:100%;">
-                  <div id="event-date-title" style="font-size:12px; font-weight:800; color:#7c3aed; margin-bottom:10px;"></div>
-                  <div id="event-list">
-                    <div class="event-empty">ไม่มีงานในวันนี้<br><span>No events scheduled for this day.</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- หมายเหตุ มือถือ -->
-            <div class="cal-notice cal-notice-mobile">
-              งดติดตามศิลปินนอกเวลางาน ห้ามดักรอศิลปินบริเวณห้องพักหรือลานจอดรถ และตึกสังกัด<br>
-              <span>Please refrain from following the artists outside of work hours. Please do not wait for the artists near their residences, parking lots and company building.</span>
             </div>
 
             <div class="cal-label" style="margin-top:18px; margin-bottom:8px">FILMOGRAPHY</div>
@@ -694,31 +698,37 @@ async function loadRewards() {
   ).join("");
 }
 
+function closePopup(e) {
+  if (!e || e.target === document.getElementById("cal-popup-overlay")) {
+    document.getElementById("cal-popup-overlay").classList.remove("active");
+  }
+}
+
 function showEvents(dateStr) {
   const events = scheduleEvents.filter(e => e.date === dateStr);
-  const list = document.getElementById("event-list");
-  const title = document.getElementById("event-date-title");
-  const detail = document.getElementById("event-detail");
-  if (detail) detail.style.display = "block";
+  const list = document.getElementById("cal-popup-list");
+  const dateTitle = document.getElementById("cal-popup-date");
 
   const [y, m, d] = dateStr.split("-");
   const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  if (title) title.textContent = d + " " + months[parseInt(m)-1] + " " + y;
+  if (dateTitle) dateTitle.textContent = d + " " + months[parseInt(m)-1] + " " + y;
 
   if (!events.length) {
     list.innerHTML = '<div class="event-empty">ไม่มีงานในวันนี้<br><span>No events scheduled for this day.</span></div>';
-    return;
+  } else {
+    list.innerHTML = events.map(e =>
+      '<div class="event-item">' +
+      '<div class="e-name">' + e.title + '</div>' +
+      (e.location ? '<div class="e-row"><span>Location :</span>' + e.location + '</div>' : '') +
+      (e.time ? '<div class="e-row"><span>Time :</span>' + e.time + '</div>' : '') +
+      (e.livestream ? '<div class="e-row"><span>Live Streaming :</span><a href="' + e.livestream + '" target="_blank" style="color:#7c3aed">' + e.livestream + '</a></div>' : '') +
+      (e.with ? '<div class="e-row"><span>With :</span>' + e.with + '</div>' : '') +
+      (e.note ? '<div class="e-row"><span>Note :</span><span style="' + (e.note_color ? 'color:'+e.note_color : '') + '">' + e.note + '</span></div>' : '') +
+      '</div>'
+    ).join("");
   }
-  list.innerHTML = events.map(e =>
-    '<div class="event-item">' +
-    '<div class="e-name">' + e.title + '</div>' +
-    (e.location ? '<div class="e-row"><span>Location :</span>' + e.location + '</div>' : '') +
-    (e.time ? '<div class="e-row"><span>Time :</span>' + e.time + '</div>' : '') +
-    (e.livestream ? '<div class="e-row"><span>Live Streaming :</span><a href="' + e.livestream + '" target="_blank" style="color:#7c3aed">' + e.livestream + '</a></div>' : '') +
-    (e.with ? '<div class="e-row"><span>With :</span>' + e.with + '</div>' : '') +
-    (e.note ? '<div class="e-row"><span>Note :</span><span style="' + (e.note_color ? 'color:'+e.note_color : '') + '">' + e.note + '</span></div>' : '') +
-    '</div>'
-  ).join("");
+
+  document.getElementById("cal-popup-overlay").classList.add("active");
   document.querySelectorAll(".cal-grid .day").forEach(el => el.classList.remove("selected"));
 }
 
