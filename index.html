@@ -337,6 +337,9 @@ async function loadConfig() {
     document.getElementById("nav-logo").textContent = cfg.site_name;
     document.title = cfg.site_name;
   }
+  if (cfg.site_name_size) {
+    document.getElementById("nav-logo").style.fontSize = cfg.site_name_size;
+  }
 
   const headingColor     = cfg.heading_color     || "#7c3aed";
   const tabColor         = cfg.tab_color         || "#888888";
