@@ -129,7 +129,7 @@
     .work-title { color: #7c3aed; font-weight: 700; margin-top: 4px; }
     .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
     .rewards-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .rewards-table th { background: #f0e6ff; font-weight: 700; padding: 8px 12px; text-align: left; border-bottom: 2px solid #d8b4fe; }
+    .rewards-table th { font-weight: 700; padding: 8px 12px; text-align: left; border-bottom: 2px solid #d8b4fe; }
     .rewards-table td { padding: 8px 12px; border-bottom: 1px solid #f0e6ff; color: #444; }
     .rewards-table tr:last-child td { border-bottom: none; }
     .rewards-table tr:hover td { background: #fdf4ff; }
@@ -480,7 +480,7 @@ async function loadConfig() {
     .follower-bar { background: ${followerBarColor} !important; }
     .rewards-table th { color: ${rewardsHeaderColor} !important; background: ${rewardsHeaderBg || rewardsHeaderColor + "18"} !important; border-bottom-color: ${rewardsHeaderColor}44 !important; }
     ${rewardsFont  ? ".rewards-table { font-family: " + rewardsFont + ", sans-serif; }" : ""}
-    ${rewardsSize  ? ".rewards-table td, .rewards-table th { font-size: " + rewardsSize + " !important; }" : ""}
+    ${rewardsSize  ? ".rewards-table td { font-size: " + rewardsSize + " !important; } .rewards-table th { font-size: " + rewardsSize + " !important; color: " + rewardsHeaderColor + " !important; }" : ""}
     ${rewardsColor ? ".rewards-table td { color: " + rewardsColor + " !important; }" : ""}
     .cal-popup-date { color: ${popupDateColor} !important; ${popupDateFont ? "font-family:" + popupDateFont + ", sans-serif;" : ""} ${popupDateSize ? "font-size:" + popupDateSize + ";" : ""} }
     ${popupNoticeFont  ? ".cal-popup-notice { font-family: " + popupNoticeFont + ", sans-serif; }" : ""}
