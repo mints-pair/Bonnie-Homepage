@@ -129,7 +129,7 @@
     .work-title { color: #7c3aed; font-weight: 700; margin-top: 4px; }
     .loading { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
     .rewards-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .rewards-table th { background: #f0e6ff; color: #7c3aed; font-weight: 700; padding: 8px 12px; text-align: left; border-bottom: 2px solid #d8b4fe; }
+    .rewards-table th { background: #f0e6ff; font-weight: 700; padding: 8px 12px; text-align: left; border-bottom: 2px solid #d8b4fe; }
     .rewards-table td { padding: 8px 12px; border-bottom: 1px solid #f0e6ff; color: #444; }
     .rewards-table tr:last-child td { border-bottom: none; }
     .rewards-table tr:hover td { background: #fdf4ff; }
@@ -398,7 +398,7 @@ async function loadConfig() {
   const videoRatio       = cfg.video_ratio       || "16/9";
   const sidebarFontSize  = cfg.sidebar_font_size || "";
   const followerBarColor = cfg.follower_bar_color || "rgba(30,0,60,0.72)";
-  const rewardsFont        = cfg.rewards_font         || "";
+  const rewardsHeaderBg   = cfg.rewards_header_bg    || "";
   const rewardsSize        = cfg.rewards_size         || "";
   const rewardsColor       = cfg.rewards_color        || "";
   const rewardsHeaderColor = cfg.rewards_header_color || headingColor;
@@ -477,7 +477,7 @@ async function loadConfig() {
     ${eventRowColor ? ".event-item .e-row { color: " + eventRowColor + " !important; }" : ""}
     .event-item .e-row span { color: ${eventLabelColor} !important; ${eventLabelFont ? "font-family:" + eventLabelFont + ", sans-serif;" : ""} ${eventLabelSize ? "font-size:" + eventLabelSize + ";" : ""} }
     .follower-bar { background: ${followerBarColor} !important; }
-    .rewards-table th { color: ${rewardsHeaderColor} !important; background: ${rewardsHeaderColor}18 !important; border-bottom-color: ${rewardsHeaderColor}44 !important; }
+    .rewards-table th { color: ${rewardsHeaderColor} !important; background: ${rewardsHeaderBg || rewardsHeaderColor + "18"} !important; border-bottom-color: ${rewardsHeaderColor}44 !important; }
     ${rewardsFont  ? ".rewards-table { font-family: " + rewardsFont + ", sans-serif; }" : ""}
     ${rewardsSize  ? ".rewards-table td, .rewards-table th { font-size: " + rewardsSize + " !important; }" : ""}
     ${rewardsColor ? ".rewards-table td { color: " + rewardsColor + " !important; }" : ""}
