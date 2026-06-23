@@ -365,6 +365,13 @@ async function loadConfig() {
   const highlightColor  = cfg.highlight_color  || headingColor;
   const sidebarColor    = cfg.sidebar_color    || headingColor;
 
+  // ขนาดรูป
+  const bannerHeight  = cfg.banner_height  || "200px";
+  const sliderRatio   = cfg.slider_ratio   || "6/1";
+  const profileRatio  = cfg.profile_ratio  || "210/297";
+  const socialSize    = cfg.social_size    || "200px";
+  const videoRatio    = cfg.video_ratio    || "16/9";
+
   const dynamicStyle = document.createElement("style");
   dynamicStyle.id = "dynamic-config-style";
   dynamicStyle.textContent = `
@@ -374,8 +381,15 @@ async function loadConfig() {
     .tab.active { color: ${tabActiveColor} !important; border-bottom-color: ${tabActiveColor} !important; }
     .event-dot { background: ${highlightColor}; }
     .day.today .event-dot { background: #fff; }
-    .profile-img { border-color: ${headingColor}; }
+    .profile-img { border-color: ${headingColor}; aspect-ratio: ${profileRatio}; }
     .cal-grid .day.selected { outline-color: ${headingColor}; }
+    .top-banner { height: ${bannerHeight}; }
+    .top-banner img { height: ${bannerHeight}; }
+    .slider-box { aspect-ratio: ${sliderRatio}; }
+    .social-grid > div { width: ${socialSize}; }
+    .social-thumb { max-width: ${socialSize}; }
+    .yt-thumb { aspect-ratio: ${videoRatio}; }
+    .yt-card img { aspect-ratio: ${videoRatio}; }
   `;
   // ลบ style เก่าก่อนใส่ใหม่
   const old = document.getElementById("dynamic-config-style");
