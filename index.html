@@ -500,22 +500,15 @@ function startSlider() {
 }
 
 function getWorksThumbnail(imageUrl, link) {
-  // ถ้ามีรูปจาก Drive ใช้อันนั้นก่อน
   if (imageUrl && imageUrl.includes("drive.google.com")) return convertDriveUrl(imageUrl);
   if (imageUrl && imageUrl.includes("lh3.googleusercontent.com")) return imageUrl;
 
-  // ดึง thumbnail จาก YouTube link อัตโนมัติ
   if (link) {
-    // YouTube video: watch?v=ID หรือ youtu.be/ID หรือ /live/ID
-    const vid = link.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/);
+    // YouTube video: watch?v=ID หรือ youtu.be/ID หรือ /live/ID (ตัด ?si= ออก)
+    const vid = link.match(/(?:v=|youtu\.be\/|live\/)([a-zA-Z0-9_-]{11})/);
     if (vid) return "https://img.youtube.com/vi/" + vid[1] + "/maxresdefault.jpg";
-
-    // YouTube playlist: list=ID → ดึง thumbnail จาก playlist
-    const pl = link.match(/[?&]list=([^&]+)/);
-    if (pl) return "https://img.youtube.com/vi/" + pl[1].replace("PL","") + "/maxresdefault.jpg";
   }
 
-  // fallback ใช้รูปจาก imageUrl ตามปกติ
   return imageUrl ? convertDriveUrl(imageUrl) : "";
 }
 
