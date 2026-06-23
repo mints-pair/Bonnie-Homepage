@@ -358,6 +358,30 @@ async function loadConfig() {
     document.title = cfg.site_name;
   }
 
+  // รวม CSS ทั้งหมดไว้ใน style block เดียว
+  const headingColor    = cfg.heading_color    || "#7c3aed";
+  const tabColor        = cfg.tab_color        || "#888888";
+  const tabActiveColor  = cfg.tab_active_color || headingColor;
+  const highlightColor  = cfg.highlight_color  || headingColor;
+  const sidebarColor    = cfg.sidebar_color    || headingColor;
+
+  const dynamicStyle = document.createElement("style");
+  dynamicStyle.id = "dynamic-config-style";
+  dynamicStyle.textContent = `
+    .cal-label, .yt-label, .s-name, .contact-label, .work-title { color: ${headingColor}; }
+    .sidebar a { color: ${sidebarColor}; }
+    .tab { color: ${tabColor} !important; }
+    .tab.active { color: ${tabActiveColor} !important; border-bottom-color: ${tabActiveColor} !important; }
+    .event-dot { background: ${highlightColor}; }
+    .day.today .event-dot { background: #fff; }
+    .profile-img { border-color: ${headingColor}; }
+    .cal-grid .day.selected { outline-color: ${headingColor}; }
+  `;
+  // ลบ style เก่าก่อนใส่ใหม่
+  const old = document.getElementById("dynamic-config-style");
+  if (old) old.remove();
+  document.head.appendChild(dynamicStyle);
+
   // ฟ้อนและสีตัวหนังสือ
   if (cfg.font_family) {
     const systemFonts = ["Arial","Helvetica","Georgia","sans-serif","serif","monospace","Tahoma","Verdana"];
@@ -371,24 +395,6 @@ async function loadConfig() {
   }
   if (cfg.font_size) document.body.style.fontSize = cfg.font_size;
   if (cfg.font_color) document.body.style.color = cfg.font_color;
-  if (cfg.heading_color) {
-    const style = document.createElement("style");
-    style.textContent = ".cal-label,.yt-label,.s-name,.contact-label,.yt-page-label,.sidebar a,.tab.active,.contact-handle,.work-title { color: " + cfg.heading_color + " !important; } .tab.active { border-bottom-color: " + cfg.heading_color + " !important; }";
-    document.head.appendChild(style);
-  }
-  if (cfg.tab_color || cfg.tab_active_color) {
-    const style = document.createElement("style");
-    let css = "";
-    if (cfg.tab_color) css += ".tab { color: " + cfg.tab_color + " !important; }";
-    if (cfg.tab_active_color) css += ".tab.active { color: " + cfg.tab_active_color + " !important; border-bottom-color: " + cfg.tab_active_color + " !important; }";
-    style.textContent = css;
-    document.head.appendChild(style);
-  }
-  if (cfg.highlight_color) {
-    const style = document.createElement("style");
-    style.textContent = ".event-dot { background: " + cfg.highlight_color + " !important; } .day.today .event-dot { background: #fff !important; }";
-    document.head.appendChild(style);
-  }
 
   // ฟ้อนแยกแต่ละหน้า
   window._pageFonts = {
