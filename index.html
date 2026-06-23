@@ -253,7 +253,7 @@
             <div class="cal-label" style="margin-top:18px; margin-bottom:8px">FILMOGRAPHY</div>
             <div class="works-grid" id="works-grid"></div>
 
-            <div class="cal-label" style="margin-top:18px; margin-bottom:8px">REWARDS</div>
+            <div class="cal-label" style="margin-top:18px; margin-bottom:8px">AWARDS</div>
             <div id="rewards-wrap">
               <table class="rewards-table">
                 <thead><tr><th>Award</th><th>Date</th></tr></thead>
@@ -383,7 +383,10 @@ async function loadConfig() {
   const profileRatio     = cfg.profile_ratio     || "210/297";
   const socialSize       = cfg.social_size       || "200px";
   const videoRatio       = cfg.video_ratio       || "16/9";
-  const sidebarFontSize  = cfg.sidebar_font_size || "";
+  const rewardsFont        = cfg.rewards_font         || "";
+  const rewardsSize        = cfg.rewards_size         || "";
+  const rewardsColor       = cfg.rewards_color        || "";
+  const rewardsHeaderColor = cfg.rewards_header_color || headingColor;
 
   // ฟ้อน สี ขนาด แต่ละส่วน
   const videoTitleFont  = cfg.video_title_font  || "";
@@ -446,6 +449,10 @@ async function loadConfig() {
     ${eventRowSize  ? ".event-item .e-row { font-size: " + eventRowSize + " !important; }" : ""}
     ${eventRowColor ? ".event-item .e-row { color: " + eventRowColor + " !important; }" : ""}
     .event-item .e-row span { color: ${eventLabelColor} !important; ${eventLabelFont ? "font-family:" + eventLabelFont + ", sans-serif;" : ""} ${eventLabelSize ? "font-size:" + eventLabelSize + ";" : ""} }
+    .rewards-table th { color: ${rewardsHeaderColor} !important; background: ${rewardsHeaderColor}18 !important; border-bottom-color: ${rewardsHeaderColor}44 !important; }
+    ${rewardsFont  ? ".rewards-table { font-family: " + rewardsFont + ", sans-serif; }" : ""}
+    ${rewardsSize  ? ".rewards-table td, .rewards-table th { font-size: " + rewardsSize + " !important; }" : ""}
+    ${rewardsColor ? ".rewards-table td { color: " + rewardsColor + " !important; }" : ""}
   `;
   document.head.appendChild(dynamicStyle);
 
