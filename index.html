@@ -419,6 +419,18 @@ async function loadConfig() {
   const eventLabelFont  = cfg.event_label_font  || "";
   const eventLabelSize  = cfg.event_label_size  || "";
   const eventLabelColor = cfg.event_label_color || headingColor;
+  const popupDateFont    = cfg.popup_date_font    || "";
+  const popupDateSize    = cfg.popup_date_size    || "";
+  const popupDateColor   = cfg.popup_date_color   || headingColor;
+  const popupNoticeFont  = cfg.popup_notice_font  || "";
+  const popupNoticeSize  = cfg.popup_notice_size  || "";
+  const popupNoticeColor = cfg.popup_notice_color || "";
+  const contactPlatformFont  = cfg.contact_platform_font  || "";
+  const contactPlatformSize  = cfg.contact_platform_size  || "";
+  const contactPlatformColor = cfg.contact_platform_color || "";
+  const contactHandleFont    = cfg.contact_handle_font    || "";
+  const contactHandleSize    = cfg.contact_handle_size    || "";
+  const contactHandleColor   = cfg.contact_handle_color   || "";
 
   const old = document.getElementById("dynamic-config-style");
   if (old) old.remove();
@@ -460,6 +472,16 @@ async function loadConfig() {
     ${rewardsFont  ? ".rewards-table { font-family: " + rewardsFont + ", sans-serif; }" : ""}
     ${rewardsSize  ? ".rewards-table td, .rewards-table th { font-size: " + rewardsSize + " !important; }" : ""}
     ${rewardsColor ? ".rewards-table td { color: " + rewardsColor + " !important; }" : ""}
+    .cal-popup-date { color: ${popupDateColor} !important; ${popupDateFont ? "font-family:" + popupDateFont + ", sans-serif;" : ""} ${popupDateSize ? "font-size:" + popupDateSize + ";" : ""} }
+    ${popupNoticeFont  ? ".cal-popup-notice { font-family: " + popupNoticeFont + ", sans-serif; }" : ""}
+    ${popupNoticeSize  ? ".cal-popup-notice { font-size: " + popupNoticeSize + " !important; }" : ""}
+    ${popupNoticeColor ? ".cal-popup-notice { color: " + popupNoticeColor + " !important; }" : ""}
+    ${contactPlatformFont  ? ".contact-platform { font-family: " + contactPlatformFont + ", sans-serif; }" : ""}
+    ${contactPlatformSize  ? ".contact-platform { font-size: " + contactPlatformSize + " !important; }" : ""}
+    ${contactPlatformColor ? ".contact-platform { color: " + contactPlatformColor + " !important; opacity:1; }" : ""}
+    ${contactHandleFont    ? ".contact-handle { font-family: " + contactHandleFont + ", sans-serif; }" : ""}
+    ${contactHandleSize    ? ".contact-handle { font-size: " + contactHandleSize + " !important; }" : ""}
+    ${contactHandleColor   ? ".contact-handle { color: " + contactHandleColor + " !important; }" : ""}
   `;
   document.head.appendChild(dynamicStyle);
 
