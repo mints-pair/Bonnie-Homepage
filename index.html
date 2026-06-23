@@ -276,7 +276,8 @@ function getSheetUrl(gid) {
 
 async function fetchCSV(gid) {
   try {
-    const res = await fetch(getSheetUrl(gid));
+    const url = getSheetUrl(gid) + "&t=" + Date.now();
+    const res = await fetch(url, { cache: "no-store" });
     const text = await res.text();
     return text.trim().split("\n").slice(1).map(row =>
       row.split(",").map(c => c.trim().replace(/^"|"$/g, ""))
