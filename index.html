@@ -24,7 +24,7 @@
     .dot.active { background: #7c3aed; }
 
     .navbar { background: #c084fc; display: flex; align-items: center; padding: 0 16px; height: 44px; }
-    .nav-logo { font-size: 13px; color: #fff; font-weight: 700; font-style: italic; }
+    .nav-logo { font-size: 13px; color: #fff; font-weight: 700; }
 
     .main { display: flex; }
     .sidebar { width: 180px; min-width: 150px; padding: 12px 0; background: #fff; border-right: 1px solid #e5e5e5; }
@@ -377,7 +377,8 @@ async function loadConfig() {
   if (cfg.site_name_size)   document.getElementById("nav-logo").style.fontSize   = cfg.site_name_size;
   if (cfg.site_name_color)  document.getElementById("nav-logo").style.color       = cfg.site_name_color;
   if (cfg.site_name_font)   document.getElementById("nav-logo").style.fontFamily  = cfg.site_name_font + ", sans-serif";
-  if (cfg.site_name_italic) document.getElementById("nav-logo").style.fontStyle   = cfg.site_name_italic === "false" ? "normal" : "italic";
+  if (cfg.site_name_italic) document.getElementById("nav-logo").style.fontStyle = cfg.site_name_italic === "true" ? "italic" : "normal";
+  else document.getElementById("nav-logo").style.fontStyle = "normal";
 
   const headingColor     = cfg.heading_color     || "#7c3aed";
   const tabColor         = cfg.tab_color         || "#888888";
