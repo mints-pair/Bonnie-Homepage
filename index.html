@@ -394,7 +394,7 @@ async function loadConfig() {
   const socialSize       = cfg.social_size       || "200px";
   const videoRatio       = cfg.video_ratio       || "16/9";
   const sidebarFontSize  = cfg.sidebar_font_size || "";
-  const rewardsFont        = cfg.rewards_font         || "";
+  const followerBarColor = cfg.follower_bar_color || "rgba(30,0,60,0.72)";
   const rewardsSize        = cfg.rewards_size         || "";
   const rewardsColor       = cfg.rewards_color        || "";
   const rewardsHeaderColor = cfg.rewards_header_color || headingColor;
@@ -472,6 +472,7 @@ async function loadConfig() {
     ${eventRowSize  ? ".event-item .e-row { font-size: " + eventRowSize + " !important; }" : ""}
     ${eventRowColor ? ".event-item .e-row { color: " + eventRowColor + " !important; }" : ""}
     .event-item .e-row span { color: ${eventLabelColor} !important; ${eventLabelFont ? "font-family:" + eventLabelFont + ", sans-serif;" : ""} ${eventLabelSize ? "font-size:" + eventLabelSize + ";" : ""} }
+    .follower-bar { background: ${followerBarColor} !important; }
     .rewards-table th { color: ${rewardsHeaderColor} !important; background: ${rewardsHeaderColor}18 !important; border-bottom-color: ${rewardsHeaderColor}44 !important; }
     ${rewardsFont  ? ".rewards-table { font-family: " + rewardsFont + ", sans-serif; }" : ""}
     ${rewardsSize  ? ".rewards-table td, .rewards-table th { font-size: " + rewardsSize + " !important; }" : ""}
