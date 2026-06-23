@@ -486,6 +486,7 @@ async function loadConfig() {
       link.onload = resolve;
       link.onerror = resolve;
       document.head.appendChild(link);
+      setTimeout(resolve, 3000); // timeout 3 วินาที กัน font โหลดไม่เสร็จ
     });
   });
   await Promise.all(fontPromises);
