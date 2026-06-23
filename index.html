@@ -374,9 +374,10 @@ async function loadConfig() {
     document.getElementById("nav-logo").textContent = cfg.site_name;
     document.title = cfg.site_name;
   }
-  if (cfg.site_name_size) {
-    document.getElementById("nav-logo").style.fontSize = cfg.site_name_size;
-  }
+  if (cfg.site_name_size)   document.getElementById("nav-logo").style.fontSize   = cfg.site_name_size;
+  if (cfg.site_name_color)  document.getElementById("nav-logo").style.color       = cfg.site_name_color;
+  if (cfg.site_name_font)   document.getElementById("nav-logo").style.fontFamily  = cfg.site_name_font + ", sans-serif";
+  if (cfg.site_name_italic) document.getElementById("nav-logo").style.fontStyle   = cfg.site_name_italic === "false" ? "normal" : "italic";
 
   const headingColor     = cfg.heading_color     || "#7c3aed";
   const tabColor         = cfg.tab_color         || "#888888";
