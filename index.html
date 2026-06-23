@@ -35,7 +35,7 @@
     .content { flex: 1; padding: 12px; min-width: 0; }
 
     .tabs-row { display: flex; margin: 14px 0 10px; border-bottom: 2px solid #e5e5e5; }
-    .tab { padding: 6px 16px; font-size: 12px; font-weight: 700; color: #888; cursor: pointer; letter-spacing: .5px; }
+    .tab { padding: 6px 16px; font-weight: 700; color: #888; cursor: pointer; letter-spacing: .5px; }
     .tab.active { color: #7c3aed; border-bottom: 2px solid #7c3aed; margin-bottom: -2px; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -373,7 +373,15 @@ async function loadConfig() {
   if (cfg.font_color) document.body.style.color = cfg.font_color;
   if (cfg.heading_color) {
     const style = document.createElement("style");
-    style.textContent = ".cal-label,.yt-label,.s-name,.contact-label,.yt-page-label,.sidebar a,.tab.active,.contact-handle,.work-title { color: " + cfg.heading_color + " !important; } .navbar { background: " + (cfg.navbar_color || "#c084fc") + "; }";
+    style.textContent = ".cal-label,.yt-label,.s-name,.contact-label,.yt-page-label,.sidebar a,.tab.active,.contact-handle,.work-title { color: " + cfg.heading_color + " !important; } .tab.active { border-bottom-color: " + cfg.heading_color + " !important; }";
+    document.head.appendChild(style);
+  }
+  if (cfg.tab_color || cfg.tab_active_color) {
+    const style = document.createElement("style");
+    let css = "";
+    if (cfg.tab_color) css += ".tab { color: " + cfg.tab_color + " !important; }";
+    if (cfg.tab_active_color) css += ".tab.active { color: " + cfg.tab_active_color + " !important; border-bottom-color: " + cfg.tab_active_color + " !important; }";
+    style.textContent = css;
     document.head.appendChild(style);
   }
   if (cfg.highlight_color) {
@@ -595,7 +603,14 @@ let scheduleEvents = []; // [{date, title, location, time, livestream, with}]
 async function loadSchedule() {
   const rows = await fetchCSV(GID.schedule);
   scheduleEvents = rows.filter(r => r[0]).map(r => ({
-    date: r[0], title: r[1]||'', location: r[2]||'', time: r[3]||'', livestream: r[4]||'', with: r[5]||'', note: r[6]||'', note_color: r[7]||''
+    date: r[0], 
+    title: r[1]||'', 
+    location: (r[2]==='-'?'':r[2])||'', 
+    time: (r[3]==='-'?'':r[3])||'', 
+    livestream: (r[4]==='-'?'':r[4])||'', 
+    with: (r[5]==='-'?'':r[5])||'', 
+    note: (r[6]==='-'?'':r[6])||'', 
+    note_color: (r[7]==='-'?'':r[7])||''
   }));
   scheduleDates = [...new Set(scheduleEvents.map(e => e.date))];
   renderCalendar();
