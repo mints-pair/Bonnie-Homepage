@@ -422,14 +422,19 @@ async function loadConfig() {
   // โหลด Google Fonts ทุกฟ้อนที่ต้องใช้
   const allFonts = [...new Set(Object.values(window._pageFonts).map(p => p.font).filter(Boolean))];
   const systemFonts2 = ["Arial","Helvetica","Georgia","sans-serif","serif","monospace","Tahoma","Verdana"];
-  allFonts.filter(f => !systemFonts2.includes(f)).forEach(f => {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://fonts.googleapis.com/css2?family=" + f.replace(/ /g, "+") + "&display=swap";
-    document.head.appendChild(link);
+  const fontPromises = allFonts.filter(f => !systemFonts2.includes(f)).map(f => {
+    return new Promise(resolve => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://fonts.googleapis.com/css2?family=" + f.replace(/ /g, "+") + ":wght@400;700&display=swap";
+      link.onload = resolve;
+      link.onerror = resolve;
+      document.head.appendChild(link);
+    });
   });
 
-  // เปลี่ยนฟ้อนตามหน้าปัจจุบัน
+  // รอ font โหลดเสร็จก่อน apply
+  await Promise.all(fontPromises);
   applyPageFont("home");
 }
 
