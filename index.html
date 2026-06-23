@@ -352,6 +352,31 @@ async function loadConfig() {
   const videoRatio       = cfg.video_ratio       || "16/9";
   const sidebarFontSize  = cfg.sidebar_font_size || "";
 
+  // ฟ้อน สี ขนาด แต่ละส่วน
+  const videoTitleFont  = cfg.video_title_font  || "";
+  const videoTitleSize  = cfg.video_title_size  || "";
+  const videoTitleColor = cfg.video_title_color || "";
+
+  const bioFont  = cfg.bio_font  || "";
+  const bioSize  = cfg.bio_size  || "";
+  const bioColor = cfg.bio_color || "";
+
+  const noticeFont  = cfg.notice_font  || "";
+  const noticeSize  = cfg.notice_size  || "";
+  const noticeColor = cfg.notice_color || "";
+
+  const eventNameFont  = cfg.event_name_font  || "";
+  const eventNameSize  = cfg.event_name_size  || "";
+  const eventNameColor = cfg.event_name_color || "";
+
+  const eventRowFont  = cfg.event_row_font  || "";
+  const eventRowSize  = cfg.event_row_size  || "";
+  const eventRowColor = cfg.event_row_color || "";
+
+  const eventLabelFont  = cfg.event_label_font  || "";
+  const eventLabelSize  = cfg.event_label_size  || "";
+  const eventLabelColor = cfg.event_label_color || headingColor;
+
   const old = document.getElementById("dynamic-config-style");
   if (old) old.remove();
 
@@ -372,6 +397,22 @@ async function loadConfig() {
     .social-thumb { max-width: ${socialSize}; }
     .yt-thumb { aspect-ratio: ${videoRatio} !important; }
     .yt-card img { aspect-ratio: ${videoRatio} !important; }
+    ${videoTitleFont  ? ".yt-title, .yt-card-title { font-family: " + videoTitleFont + ", sans-serif; }" : ""}
+    ${videoTitleSize  ? ".yt-title, .yt-card-title { font-size: " + videoTitleSize + " !important; }" : ""}
+    ${videoTitleColor ? ".yt-title, .yt-card-title { color: " + videoTitleColor + " !important; }" : ""}
+    ${bioFont  ? ".bio-text { font-family: " + bioFont + ", sans-serif; }" : ""}
+    ${bioSize  ? ".bio-text { font-size: " + bioSize + " !important; }" : ""}
+    ${bioColor ? ".bio-text { color: " + bioColor + " !important; }" : ""}
+    ${noticeFont  ? ".cal-notice { font-family: " + noticeFont + ", sans-serif; }" : ""}
+    ${noticeSize  ? ".cal-notice { font-size: " + noticeSize + " !important; }" : ""}
+    ${noticeColor ? ".cal-notice { color: " + noticeColor + " !important; }" : ""}
+    ${eventNameFont  ? ".event-item .e-name { font-family: " + eventNameFont + ", sans-serif; }" : ""}
+    ${eventNameSize  ? ".event-item .e-name { font-size: " + eventNameSize + " !important; }" : ""}
+    ${eventNameColor ? ".event-item .e-name { color: " + eventNameColor + " !important; }" : ""}
+    ${eventRowFont  ? ".event-item .e-row { font-family: " + eventRowFont + ", sans-serif; }" : ""}
+    ${eventRowSize  ? ".event-item .e-row { font-size: " + eventRowSize + " !important; }" : ""}
+    ${eventRowColor ? ".event-item .e-row { color: " + eventRowColor + " !important; }" : ""}
+    .event-item .e-row span { color: ${eventLabelColor} !important; ${eventLabelFont ? "font-family:" + eventLabelFont + ", sans-serif;" : ""} ${eventLabelSize ? "font-size:" + eventLabelSize + ";" : ""} }
   `;
   document.head.appendChild(dynamicStyle);
 
@@ -458,13 +499,39 @@ function startSlider() {
   });
 }
 
+function getWorksThumbnail(imageUrl, link) {
+  // ถ้ามีรูปจาก Drive ใช้อันนั้นก่อน
+  if (imageUrl && imageUrl.includes("drive.google.com")) return convertDriveUrl(imageUrl);
+  if (imageUrl && imageUrl.includes("lh3.googleusercontent.com")) return imageUrl;
+
+  // ดึง thumbnail จาก YouTube link อัตโนมัติ
+  if (link) {
+    // YouTube video: watch?v=ID หรือ youtu.be/ID หรือ /live/ID
+    const vid = link.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/);
+    if (vid) return "https://img.youtube.com/vi/" + vid[1] + "/maxresdefault.jpg";
+
+    // YouTube playlist: list=ID → ดึง thumbnail จาก playlist
+    const pl = link.match(/[?&]list=([^&]+)/);
+    if (pl) return "https://img.youtube.com/vi/" + pl[1].replace("PL","") + "/maxresdefault.jpg";
+  }
+
+  // fallback ใช้รูปจาก imageUrl ตามปกติ
+  return imageUrl ? convertDriveUrl(imageUrl) : "";
+}
+
 async function loadWorks() {
   const rows = await fetchCSV(GID.works);
   const grid = document.getElementById("works-grid");
   if (!rows.length || !grid) return;
-  grid.innerHTML = rows.map(r =>
-    '<div class="work-item"><a href="' + (r[2]||'#') + '" target="_blank"><img src="' + convertDriveUrl(r[1]) + '" alt="' + r[0] + '"></a><div class="work-title">' + r[0] + '</div></div>'
-  ).join("");
+  grid.innerHTML = rows.map(r => {
+    const title = r[0] || "";
+    const imageUrl = r[1] || "";
+    const link = r[2] || "#";
+    const thumb = getWorksThumbnail(imageUrl, link);
+    const id = (link.match(/(?:v=|youtu\.be\/|live\/)([^&?\/]+)/) || [])[1] || "";
+    const onerror = id ? ' onerror="this.onerror=null;this.src=\'https://img.youtube.com/vi/' + id + '/hqdefault.jpg\'"' : '';
+    return '<div class="work-item"><a href="' + link + '" target="_blank"><img src="' + thumb + '" alt="' + title + '"' + onerror + '></a><div class="work-title">' + title + '</div></div>';
+  }).join("");
 }
 
 async function loadNews() {
