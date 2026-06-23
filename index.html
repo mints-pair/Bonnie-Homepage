@@ -478,7 +478,7 @@ async function loadConfig() {
     ${eventRowColor ? ".event-item .e-row { color: " + eventRowColor + " !important; }" : ""}
     .event-item .e-row span { color: ${eventLabelColor} !important; ${eventLabelFont ? "font-family:" + eventLabelFont + ", sans-serif;" : ""} ${eventLabelSize ? "font-size:" + eventLabelSize + ";" : ""} }
     .follower-bar { background: ${followerBarColor} !important; }
-    .rewards-table th { color: ${rewardsHeaderColor} !important; background: ${rewardsHeaderBg || rewardsHeaderColor + "18"} !important; border-bottom-color: ${rewardsHeaderColor}44 !important; }
+    table.rewards-table thead tr th { color: ${rewardsHeaderColor} !important; background: ${rewardsHeaderBg || rewardsHeaderColor + "18"} !important; border-bottom-color: ${rewardsHeaderColor}44 !important; }
     ${rewardsFont  ? ".rewards-table { font-family: " + rewardsFont + ", sans-serif; }" : ""}
     ${rewardsSize  ? ".rewards-table td { font-size: " + rewardsSize + " !important; } .rewards-table th { font-size: " + rewardsSize + " !important; color: " + rewardsHeaderColor + " !important; }" : ""}
     ${rewardsColor ? ".rewards-table td { color: " + rewardsColor + " !important; }" : ""}
